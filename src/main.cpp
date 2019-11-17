@@ -27,6 +27,7 @@
 #include "main.hpp"
 #include "hwSetup.hpp"
 #include "webUi.hpp"
+#include "idleStats.hpp"
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -71,7 +72,7 @@ void setup() {
   webStart();
 
   // Set up some common threads
-
+  initIdleStats();
 }
 
 
