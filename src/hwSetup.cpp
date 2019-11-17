@@ -1,7 +1,6 @@
 #include <WiFi.h>
 #include <Preferences.h>
 #include <DNSServer.h>
-#include <ESPmDNS.h>
 #include "hwSetup.hpp"
 
 
@@ -40,9 +39,4 @@ void hwSetupNetworkAp(Preferences preferences) {
   WiFi.softAPConfig( localIp, localIp, IPAddress( 255, 255, 255, 0 ) );
   WiFi.softAP( hostname );
   dnsServer.start( 53, "*", localIp );
-  if (!MDNS.begin(hostname)) {
-    Serial.println("Error setting up MDNS responder!");
-  }
-  // Add service to MDNS-SD
-  MDNS.addService("http", "tcp", 80);
 }
