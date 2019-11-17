@@ -22,25 +22,53 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <Preferences.h>
 
 #include "main.hpp"
+#include "hwSetup.hpp"
 
 
 ///////////////////////////////////////////////////////////////////////////
 // global data
 ///////////////////////////////////////////////////////////////////////////
-SemaphoreHandle_t i2cMutex;
+SemaphoreHandle_t i2cMutex, preferencesMutex;
 
 
 
-  void setup()
-  {
-    Serial.begin(115200);
-    while (!Serial);             // Leonardo: wait for serial monitor
-    Serial.println("\nSetup");
-    // Init I2C
-    i2cMutex = xSemaphoreCreateMutex();
+void setup() {
+  Serial.begin(115200);
+  while (!Serial);
+  Serial.println("\nSetup");
+  // Init I2C
+  i2cMutex = xSemaphoreCreateMutex();
+
+  // read configuration for setup
+  Preferences preferences;
+  preferences.begin("core", true);
+
+  // chose hardware
+  uint8_t hwSetup = preferences.getUChar("hwSetup");
+  // close preferences
+  preferences.end();
+
+  switch (hwSetup) {
+    case 1:
+      hwSetupNodeMCU();
+      break;
+    case 2:
+      hwSetupF9PIoBoard();
+      break;
+    default:
+      hwSetupWifiApOnly();
+      break;
   }
+
+  // set up webinterface
+
+
+  // Set up some common threads
+
+}
 
 
 void loop( void ) {
