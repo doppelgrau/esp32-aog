@@ -14,15 +14,17 @@ void hwSetupWifiApOnly() {
   // WiFi
   hwSetupNetworkAp(preferences);
 
+  // TODO webUI
+
   // close preferences
   preferences.end();
 }
 
-void hwSetupNodeMCU() {
+void hwSetupNodeMcuNmea() {
 
 }
 
-void hwSetupF9PIoBoard() {
+void hwSetupF9PIoBoardNmea() {
 
 }
 

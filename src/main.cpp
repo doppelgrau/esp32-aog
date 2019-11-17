@@ -26,6 +26,7 @@
 
 #include "main.hpp"
 #include "hwSetup.hpp"
+#include "webUi.hpp"
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -42,6 +43,9 @@ void setup() {
   // Init I2C
   i2cMutex = xSemaphoreCreateMutex();
 
+  // prepare webinterface
+  webInitCore();
+
   // read configuration for setup
   Preferences preferences;
   preferences.begin("core", true);
@@ -53,10 +57,10 @@ void setup() {
 
   switch (hwSetup) {
     case 1:
-      hwSetupNodeMCU();
+      hwSetupNodeMcuNmea();
       break;
     case 2:
-      hwSetupF9PIoBoard();
+      hwSetupF9PIoBoardNmea();
       break;
     default:
       hwSetupWifiApOnly();
@@ -64,7 +68,7 @@ void setup() {
   }
 
   // set up webinterface
-
+  webStart();
 
   // Set up some common threads
 

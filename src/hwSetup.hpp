@@ -3,7 +3,7 @@
 #include <Preferences.h>
 
   void hwSetupWifiApOnly();
-  void hwSetupNodeMCU();
-  void hwSetupF9PIoBoard();
+  void hwSetupNodeMcuNmea();
+  void hwSetupF9PIoBoardNmea();
   void hwSetupNetworkAp(Preferences preferences);
 #endif
