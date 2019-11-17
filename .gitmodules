@@ -1,3 +1,7 @@
 [submodule "lib/MicroNMEA"]
 	path = lib/MicroNMEA
 	url = https://github.com/eringerli/MicroNMEA.git
+[submodule "lib/ESPUI"]
+	path = lib/ESPUI
+	url = https://github.com/s00500/ESPUI/
+	branch = 2.0.0
