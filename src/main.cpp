@@ -46,12 +46,14 @@ void setup() {
 
   // prepare webinterface
   webInitCore();
+  // chose hardware
+  hwSetupWebSetup();
+
 
   // read configuration for setup
   Preferences preferences;
-  preferences.begin("core", true);
+  preferences.begin("aog", true);
 
-  // chose hardware
   uint8_t hwSetup = preferences.getUChar("hwSetup");
   // close preferences
   preferences.end();

@@ -20,13 +20,13 @@ void webInitCore() {
           ESP.restart();
         }
       } );
-    webTabHardware = ESPUI.addControl( ControlType::Tab, "Hardware", "Hardware" );
     webTabGPS = ESPUI.addControl( ControlType::Tab, "GPS", "GPS" );
     webTabIMU = ESPUI.addControl( ControlType::Tab, "IMU", "IMU" );
     webTabSteeringAngle = ESPUI.addControl( ControlType::Tab, "Steering angle", "Steering angle" );
     webTabSteeringActuator = ESPUI.addControl( ControlType::Tab, "Steering actuator", "Steering actuator" );
     webTabUturn = ESPUI.addControl( ControlType::Tab, "U-Turn", "U-Turn" );
     webTabWorkSteerSwitch = ESPUI.addControl( ControlType::Tab, "Work-/Steer switch", "Work-/Steer switch" );
+    webTabHardware = ESPUI.addControl( ControlType::Tab, "Hardware", "Hardware" );
 }
 
 void webStart() {

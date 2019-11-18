@@ -29,18 +29,18 @@ volatile uint16_t idleCtrCore0 = 0;
 volatile uint16_t idleCtrCore1 = 0;
 
 bool core0IdleWorker( void ) {
-  static TickType_t xLastWakeTime;
-  if (xLastWakeTime != xTaskGetTickCount()) {
-    xLastWakeTime = xTaskGetTickCount();
+  static TickType_t xLastWakeTime0;
+  if (xLastWakeTime0 != xTaskGetTickCount()) {
+    xLastWakeTime0 = xTaskGetTickCount();
     idleCtrCore0++;
   }
   return true;
 }
 
 bool core1IdleWorker( void ) {
-  static TickType_t xLastWakeTime;
-  if (xLastWakeTime != xTaskGetTickCount()) {
-    xLastWakeTime = xTaskGetTickCount();
+  static TickType_t xLastWakeTime1;
+  if (xLastWakeTime1 != xTaskGetTickCount()) {
+    xLastWakeTime1 = xTaskGetTickCount();
     idleCtrCore1++;
   }
   return true;
