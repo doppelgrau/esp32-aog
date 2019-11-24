@@ -60,7 +60,7 @@ void setup() {
 
   switch (hwSetup) {
     case 1:
-      hwSetupNodeMcuNmea();
+      hwSetupNodeMcuCytronNmea();
       break;
     case 2:
       hwSetupF9PIoBoardNmea();

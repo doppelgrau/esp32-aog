@@ -21,7 +21,7 @@ void hwSetupWifiApOnly() {
   preferences.end();
 }
 
-void hwSetupNodeMcuNmea() {
+void hwSetupNodeMcuCytronNmea() {
 
 }
 
@@ -87,7 +87,7 @@ void hwSetupWebSetup() {
 char* hwSetupIdToName(uint8_t setup) {
   switch (setup) {
     case 1:
-      return (char*)"NodeMCU Nmea";
+      return (char*)"NodeMCU Cytron Nmea";
       break;
     case 2:
       return (char*)"F9P-IO-Board Nmea";

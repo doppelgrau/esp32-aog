@@ -3,7 +3,7 @@
 #include <Preferences.h>
 
   void hwSetupWifiApOnly();
-  void hwSetupNodeMcuNmea();
+  void hwSetupNodeMcuCytronNmea();
   void hwSetupF9PIoBoardNmea();
   void hwSetupNetworkAp(Preferences preferences);
   void hwSetupWebSetup();
