@@ -1,5 +1,5 @@
-#include "ioAccess.hpp"
 #include "main.hpp"
+#include "ioAccess.hpp"
 
 /*
 ##
@@ -94,11 +94,18 @@ bool ioAccessInitAsDigitalInput(uint8_t port, bool usePullUpDown, bool pullDirec
   }
 }
 
-bool ioAccessInitAsAnalogInput(uint8_t port);
-bool ioAccessInitAttachToPwmChannel(uint8_t port, uint8_t channel);
-
-bool ioAccessGetDigitalInput(uint8_t port);
-float ioAccessGetAnalogInput(uint8_t port);
+bool ioAccessInitAsAnalogInput(uint8_t port) {
+  return false; //TODO
+}
+bool ioAccessInitAttachToPwmChannel(uint8_t port, uint8_t channel){
+  return false; //TODO
+}
+bool ioAccessGetDigitalInput(uint8_t port){
+  return false; //TODO
+}
+float ioAccessGetAnalogInput(uint8_t port){
+  return 0; //TODO
+}
 
 
 //helper
@@ -114,6 +121,7 @@ uint8_t setBit(uint8_t byte, uint8_t position, bool value) {
 
 
 // FXL6408
+uint8_t ioAccess_FXL6408_Output[2];
 bool ioAccess_FXL6408_init(uint8_t address) {
   int returnValues = 0;
   returnValues += ioAccess_FXL6408_setByteI2C(address, 0x07, 0b11111111); // Output High-Z (not driven)

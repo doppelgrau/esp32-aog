@@ -5,7 +5,7 @@
   void hwSetupWifiApOnly();
   void hwSetupNodeMcuCytronNmea();
   void hwSetupF9PIoBoardNmea();
-  void hwSetupNetworkAp(Preferences preferences);
+  void hwSetupNetworkAp();
   void hwSetupWebSetup();
   char* hwSetupIdToName(uint8_t setup);
 #endif

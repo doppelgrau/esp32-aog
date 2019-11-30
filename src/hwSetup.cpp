@@ -4,21 +4,19 @@
 #include "hwSetup.hpp"
 #include "webUi.hpp"
 #include <ESPUI.h>
+#include "main.hpp"
 
 
 DNSServer dnsServer;
 
 void hwSetupWifiApOnly() {
-  Preferences preferences;
-  preferences.begin("hwSetup", true);
+
 
   // WiFi
-  hwSetupNetworkAp(preferences);
+  hwSetupNetworkAp();
 
   // TODO webUI
 
-  // close preferences
-  preferences.end();
 }
 
 void hwSetupNodeMcuCytronNmea() {
@@ -29,7 +27,7 @@ void hwSetupF9PIoBoardNmea() {
 
 }
 
-void hwSetupNetworkAp(Preferences preferences) {
+void hwSetupNetworkAp() {
   IPAddress localIp = IPAddress( 172, 23, 42, 1 );
   char hostname[33];
   strcpy(hostname, "ESP-AOG"); // default
@@ -44,19 +42,13 @@ void hwSetupNetworkAp(Preferences preferences) {
 }
 
 void hwSetupWebSetup() {
-  Preferences preferences;
-  preferences.begin("aog", true);
   uint8_t hw = preferences.getUChar("hwSetup");
-  preferences.end();
 
   // HW-"Plattform"
   if ( hw  == 0 ) {
     uint16_t sel = ESPUI.addControl( ControlType::Select, "Hardware", "0", ControlColor::Wetasphalt, webTabHardware,
       []( Control * control, int id ) {
-        Preferences preferences;
-        preferences.begin("aog", false);
         preferences.putUChar("hwSetup", control->value.toInt());
-        preferences.end();
         webChangeNeedsReboot();
       } );
     ESPUI.addControl( ControlType::Option, hwSetupIdToName(0), "0", ControlColor::Alizarin, sel );
@@ -75,8 +67,6 @@ void hwSetupWebSetup() {
         control->color = ControlColor::Alizarin;
         ESPUI.updateControl( control );
       } else if ( id == B_UP && control->value.equals("Really?")) {
-        Preferences preferences;
-        preferences.begin("aog", false);
         preferences.clear();
         preferences.end();
         webChangeNeedsReboot();

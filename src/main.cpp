@@ -23,40 +23,52 @@
 #include <stdio.h>
 #include <string.h>
 #include <Preferences.h>
+#include <SoftwareSerial.h>
 
 #include "main.hpp"
 #include "hwSetup.hpp"
 #include "webUi.hpp"
 #include "idleStats.hpp"
-
+#include "ioAccess.hpp"
 
 ///////////////////////////////////////////////////////////////////////////
 // global data
 ///////////////////////////////////////////////////////////////////////////
 SemaphoreHandle_t i2cMutex, preferencesMutex;
+Status status;
+Preferences preferences;
 
-
+HardwareSerial usb(Serial);
+HardwareSerial gps1(Serial1);
+SoftwareSerial gps2;
+HardwareSerial rs232(Serial2);
 
 void setup() {
-  Serial.begin(115200);
-  while (!Serial);
-  Serial.println("\nSetup");
+  usb.begin(115200);
+  usb.println("\nSetup");
   // Init I2C
   i2cMutex = xSemaphoreCreateMutex();
 
+  // preferences  
+  usb.println("\tOpen preferences");
+  preferences.begin("config", false);
+
+
   // prepare webinterface
+  usb.println("\tCore webinterface");
   webInitCore();
   // chose hardware
+  usb.println("\tHW-Setup Webinterface");
   hwSetupWebSetup();
 
 
   // read configuration for setup
-  Preferences preferences;
-  preferences.begin("aog", true);
+  usb.print("\tGet HW setup number: ");
 
   uint8_t hwSetup = preferences.getUChar("hwSetup");
-  // close preferences
-  preferences.end();
+  usb.println(hwSetup);
+
+  usb.println("\nbeginn HW-Init");
 
   switch (hwSetup) {
     case 1:
@@ -75,10 +87,48 @@ void setup() {
 
   // Set up some common threads
   initIdleStats();
+  xTaskCreate( statusLedWorker, "Status-LED", 2048, NULL, 1, NULL );
 }
 
 
 void loop( void ) {
-  Serial.println("Loop");
+  usb.println("Loop");
   vTaskDelay( 100 );
+}
+
+void statusLedWorker( void* z ) {
+  uint8_t position = 0;
+
+  while ( 1 ) {
+    // generate pattern from current status
+    uint32_t statusLedPattern = 0b0000111000<<22;
+    switch (status.networkStatus) {
+      case Status::Network::connecting:
+        statusLedPattern += 0b01111100000<<11;
+        break;
+      case Status::Network::connected:
+        statusLedPattern += 0b01111111111<<11;
+        break;
+      default:
+         statusLedPattern += 0b01100110011<<11;
+        break;
+    }
+    switch (status.hardwareStatus) {
+      case Status::Hardware::ok:
+        statusLedPattern += 0b01111111111;
+        break;
+      default:
+         statusLedPattern += 0b01100110011;
+        break;
+    }
+
+    // shift a bit and get first bit
+    bool ledState = ( statusLedPattern >> position ) & 1;
+    ioAccessSetDigitalOutput(status.statusPort, ledState);
+
+    // increase counter
+    position = (position + 1) % 32;
+    // Wait
+    vTaskDelay( 62 / portTICK_PERIOD_MS );
+  }
 }

@@ -22,13 +22,12 @@
 
 #include <WiFi.h>
 #include <WiFiMulti.h>
-
 #include <Wire.h>
-#include <SPI.h>
-
 #include <HTTPClient.h>
-
 #include <AsyncUDP.h>
+#include <SoftwareSerial.h>
+#include <SPI.h>
+#include <Preferences.h>
 
 #ifndef MAIN_HPP
 #define MAIN_HPP
@@ -36,8 +35,30 @@
 
 extern SemaphoreHandle_t i2cMutex;
 
+struct Status {
+  enum class Network : uint8_t {
+    disconnected,
+    connecting,
+    connected
+  } networkStatus = Network::disconnected;
+
+  enum class Hardware : uint8_t {
+    unknown,
+    ok,
+    error
+  } hardwareStatus = Hardware::unknown;
+  byte statusPort = 255;
+};
+extern Status status;
+extern Preferences preferences;
+
+extern HardwareSerial usb;
+extern HardwareSerial gps1;
+extern SoftwareSerial gps2;
+extern HardwareSerial rs232;
+
 ///////////////////////////////////////////////////////////////////////////
-// Configuration
+// ioAccess
 ///////////////////////////////////////////////////////////////////////////
 
 
@@ -50,7 +71,7 @@ extern SemaphoreHandle_t i2cMutex;
 ///////////////////////////////////////////////////////////////////////////
 // Threads
 ///////////////////////////////////////////////////////////////////////////
-
+void statusLedWorker( void* z );
 
 ///////////////////////////////////////////////////////////////////////////
 // Helper Functions
