@@ -6,6 +6,7 @@
   bool ioAccessInitAsDigitalOutput(uint8_t port);
   bool ioAccessInitAsDigitalInput(uint8_t port, bool usePullUpDown, bool pullDirectionUp);
   bool ioAccessInitAsAnalogInput(uint8_t port);
+  bool ioAccessInitPwmChannel(uint8_t channel);
   bool ioAccessInitAttachToPwmChannel(uint8_t port, uint8_t channel);
 
   void ioAccessSetDigitalOutput(uint8_t port, bool value);
@@ -19,5 +20,4 @@
   bool ioAccess_FXL6408_getDigitalOutput(byte i2cAddress, uint8_t port);
   uint8_t ioAccess_FXL6408_setByteI2C(byte i2cAddress, byte i2cregister, byte value);
   uint8_t ioAccess_FXL6408_getByteI2C(byte i2cAddress, int i2cregister);
-  extern uint8_t ioAccess_FXL6408_Output[2];
 #endif

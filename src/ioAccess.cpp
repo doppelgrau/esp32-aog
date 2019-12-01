@@ -97,6 +97,9 @@ bool ioAccessInitAsDigitalInput(uint8_t port, bool usePullUpDown, bool pullDirec
 bool ioAccessInitAsAnalogInput(uint8_t port) {
   return false; //TODO
 }
+bool ioAccessInitPwmChannel(uint8_t channel){
+  return false; //TODO
+}
 bool ioAccessInitAttachToPwmChannel(uint8_t port, uint8_t channel){
   return false; //TODO
 }
@@ -135,8 +138,7 @@ bool ioAccess_FXL6408_init(uint8_t address) {
 bool ioAccess_FXL6408_configureAsDigitalOutput(uint8_t address, uint8_t port) {
     int returnValues = 0;
     // default low
-    ioAccess_FXL6408_Output[address - 0x43] = setBit(ioAccess_FXL6408_Output[address - 0x43], port, false);
-    returnValues += ioAccess_FXL6408_setByteI2C(address, 0x05, ioAccess_FXL6408_Output[address - 0x43]);
+    ioAccess_FXL6408_setDigitalOutput(address, port, false);
     // disable High-Z
     returnValues += ioAccess_FXL6408_setByteI2C(address, 0x07, setBit(ioAccess_FXL6408_getByteI2C(address, 0x07), port, false));
     // direction
@@ -146,6 +148,7 @@ bool ioAccess_FXL6408_configureAsDigitalOutput(uint8_t address, uint8_t port) {
   }
 
 void ioAccess_FXL6408_setDigitalOutput(byte i2cAddress, uint8_t port, bool state) {
+  static uint8_t ioAccess_FXL6408_Output[2];
   uint8_t oldRegister = ioAccess_FXL6408_Output[i2cAddress - 0x43];
   ioAccess_FXL6408_Output[i2cAddress - 0x43] = setBit(ioAccess_FXL6408_Output[i2cAddress - 0x43], port, state);
   if (oldRegister != ioAccess_FXL6408_Output[i2cAddress - 0x43]) {
