@@ -49,7 +49,7 @@ void setup() {
   // Init I2C
   i2cMutex = xSemaphoreCreateMutex();
 
-  // preferences  
+  // preferences
   usb.println("\tOpen preferences");
   preferences.begin("config", false);
 
@@ -61,6 +61,8 @@ void setup() {
   usb.println("\tHW-Setup Webinterface");
   hwSetupWebSetup();
 
+  // start LED-Task early, so it can be used for the HW-setup
+  xTaskCreate( statusLedWorker, "Status-LED", 2048, NULL, 1, NULL );
 
   // read configuration for setup
   usb.print("\tGet HW setup number: ");
@@ -87,7 +89,6 @@ void setup() {
 
   // Set up some common threads
   initIdleStats();
-  xTaskCreate( statusLedWorker, "Status-LED", 2048, NULL, 1, NULL );
 }
 
 
