@@ -80,7 +80,7 @@ void setup() {
       hwSetupF9PIoBoardNmea();
       break;
     default:
-      hwSetupWifiApOnly();
+      hwSetupInitial();
       break;
   }
 

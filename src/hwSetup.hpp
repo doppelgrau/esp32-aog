@@ -2,10 +2,13 @@
 #define hwSetup_HPP
 #include <Preferences.h>
 
-  void hwSetupWifiApOnly();
   void hwSetupNodeMcuCytronNmea();
   void hwSetupF9PIoBoardNmea();
+  void hwSetupInitial();
   void hwSetupNetworkAp();
   void hwSetupWebSetup();
-  char* hwSetupIdToName(uint8_t setup);
+  void hwSetupWebNetwork();
+  char* hwSetupHardwareIdToName(uint8_t setup);
+
+  extern bool hwSetupHasEthernet;
 #endif
