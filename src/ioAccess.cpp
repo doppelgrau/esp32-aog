@@ -9,10 +9,12 @@ Port 255 has special meaning (not configured)
 Port 0-40 reserved for the respective ports on an esp32
 Port 41-44 ADS1115 Adress 0x48 Port 0-3
 Port 45 ADS1115 Adress 0x48 Differential Port 0/1
-Port 46 ADS1115 Adress 0x48 Differential Port 2/3
-Port 47-64 reserved for other possible ADS adresses
-Port 65-72 FXL6408 Address 0x43
-Port 73-80 FXL6408 Address 0x44
+Port 46 ADS1115 Adress 0x48 Differential Port 0/3
+Port 47 ADS1115 Adress 0x48 Differential Port 1/3
+Port 48 ADS1115 Adress 0x48 Differential Port 2/3
+Port 47-72 reserved for other possible ADS adresses
+Port 73-80 FXL6408 Address 0x43
+Port 71-88 FXL6408 Address 0x44
 
 ##
 ## PWM Channel
@@ -35,7 +37,7 @@ bool ioAccessInitAsDigitalOutput(uint8_t port) {
       };
       return true;
       break;
-    case 65 ... 80:
+    case 73 ... 88:
       return ioAccess_FXL6408_configureAsDigitalOutput((0x43 + (port - 65) / 8), ((port - 65) % 8));
       break;
     default:
@@ -57,7 +59,7 @@ void ioAccessSetDigitalOutput(uint8_t port, bool value) {
         }
       };
       break;
-    case 65 ... 80:
+    case 73 ... 88:
       return ioAccess_FXL6408_setDigitalOutput((0x43 + (port - 65) / 8), ((port - 65) % 8), value);
       break;
   }
@@ -86,7 +88,7 @@ bool ioAccessInitAsDigitalInput(uint8_t port, bool usePullUpDown, bool pullDirec
       };
       return true;
       break;
-    case 65 ... 80:
+    case 73 ... 88:
       return ioAccess_FXL6408_configureAsDigitalInput((0x43 + (port - 65) / 8), ((port - 65) % 8), usePullUpDown, pullDirectionUp);
       break;
     default:
@@ -197,3 +199,7 @@ bool ioAccess_FXL6408_getDigitalInput(byte i2cAddress, uint8_t port)  {
       }
       return result;
     }
+
+bool ioAccess_ads1115_init(uint8_t address) {
+  return true;
+}
