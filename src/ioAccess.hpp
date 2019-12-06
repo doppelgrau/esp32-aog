@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Adafruit_ADS1015.h>
 
 #ifndef ioAccess_HPP
 #define ioAccess_HPP
@@ -21,6 +22,7 @@
   uint8_t ioAccess_FXL6408_setByteI2C(byte i2cAddress, byte i2cregister, byte value);
   uint8_t ioAccess_FXL6408_getByteI2C(byte i2cAddress, int i2cregister);
 
+  extern Adafruit_ADS1115 ioAccess_FXL6408_Output[4];
   bool ioAccess_ads1115_init(uint8_t address) ;
 
 #endif

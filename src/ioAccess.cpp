@@ -22,6 +22,9 @@ Port 71-88 FXL6408 Address 0x44
 Channel 0-15 ESP32
 */
 
+Adafruit_ADS1115 ioAccess_ads1115[4];
+
+
 bool ioAccessInitAsDigitalOutput(uint8_t port) {
   switch (port) {
     case 0:
@@ -29,6 +32,7 @@ bool ioAccessInitAsDigitalOutput(uint8_t port) {
     case 4 ... 5:
     case 12 ... 33: {
         // all "normal" ESP32 Outputs, excluded serial to usb even if in theory usable
+        pinMode(port, OUTPUT);
         gpio_num_t espPort = static_cast<gpio_num_t>(port);
         gpio_pad_select_gpio(espPort);
         gpio_intr_disable(espPort);
@@ -72,6 +76,7 @@ bool ioAccessInitAsDigitalInput(uint8_t port, bool usePullUpDown, bool pullDirec
     case 4 ... 5:
     case 12 ... 39: {
         // all "normal" ESP32 Inputs, excluded serial to usb even if in theory usable
+        pinMode(port, INPUT);
         gpio_num_t espPort = static_cast<gpio_num_t>(port);
         gpio_pad_select_gpio(espPort);
         gpio_set_direction(espPort, GPIO_MODE_INPUT);
@@ -97,7 +102,23 @@ bool ioAccessInitAsDigitalInput(uint8_t port, bool usePullUpDown, bool pullDirec
 }
 
 bool ioAccessInitAsAnalogInput(uint8_t port) {
-  return false; //TODO
+  switch (port) {
+   case 32 ... 36:
+   case 39:
+       // all "normal" ESP32 Inputs, excluded serial to usb even if in theory usable
+       pinMode(port, INPUT);
+       // set everytime, just to be sure
+       analogReadResolution(10); // Default of 12 is not very linear. Recommended to use 10 or 11 depending on needed resolution.
+       analogSetAttenuation(ADC_11db); // Default is 11db which is very noisy. But needed for full scale range  Recommended to use 2.5 or 6.
+     return true;
+     break;
+   case 41 ... 72:
+     // just assume has been set up, no additionla init necessary
+     return true;
+     break;
+   default:
+     return false;
+ }
 }
 bool ioAccessInitPwmChannel(uint8_t channel){
   return false; //TODO
@@ -106,10 +127,51 @@ bool ioAccessInitAttachToPwmChannel(uint8_t port, uint8_t channel){
   return false; //TODO
 }
 bool ioAccessGetDigitalInput(uint8_t port){
-  return false; //TODO
+  switch (port) {
+    case 0:
+    case 2:
+    case 4 ... 5:
+    case 12 ... 39:
+      return digitalRead(port);
+      break;
+    default:
+      return false;
+  }
 }
 float ioAccessGetAnalogInput(uint8_t port){
-  return 0; //TODO
+  switch (port) {
+    case 32 ... 36:
+    case 39:
+      return analogRead(port)/1023.0;
+      break;
+    case 41 ... 72:
+      {
+        uint8_t adsNumber = (port - 41) / 8;
+        uint8_t diffCombination = (port - 41) % 8;
+        switch (diffCombination) {
+          case 0 ... 3:
+            return ioAccess_ads1115[adsNumber].readADC_SingleEnded(diffCombination) / 32768.0;
+            break;
+          case 4:
+            return ioAccess_ads1115[adsNumber].readADC_Differential_0_1() / 32768.0;
+            break;
+          case 5:
+            return ioAccess_ads1115[adsNumber].readADC_Differential_0_3() / 32768.0;
+            break;
+          case 6:
+            return ioAccess_ads1115[adsNumber].readADC_Differential_1_3() / 32768.0;
+            break;
+          case 7:
+            return ioAccess_ads1115[adsNumber].readADC_Differential_2_3() / 32768.0;
+            break;
+          default:
+            return -3;
+        }
+      }
+      break;
+    default:
+      return -2;
+  }
 }
 
 
@@ -126,7 +188,6 @@ uint8_t setBit(uint8_t byte, uint8_t position, bool value) {
 
 
 // FXL6408
-uint8_t ioAccess_FXL6408_Output[2];
 bool ioAccess_FXL6408_init(uint8_t address) {
   int returnValues = 0;
   returnValues += ioAccess_FXL6408_setByteI2C(address, 0x07, 0b11111111); // Output High-Z (not driven)
@@ -200,6 +261,22 @@ bool ioAccess_FXL6408_getDigitalInput(byte i2cAddress, uint8_t port)  {
       return result;
     }
 
+
+// ADS1115
+
 bool ioAccess_ads1115_init(uint8_t address) {
-  return true;
+  // really basic init check, does someone respond on this Address
+  if ( xSemaphoreTake( i2cMutex, 1000 ) == pdTRUE ) {
+    Wire.beginTransmission(address);
+    if (Wire.endTransmission() == 0) {
+      ioAccess_ads1115[ address - 0x48 ] = Adafruit_ADS1115( address );
+      ioAccess_ads1115[ address - 0x48 ].setGain( GAIN_TWOTHIRDS );   // 2/3x gain +/- 6.144V  1 bit = 3mV      0.1875mV (default)
+      ioAccess_ads1115[ address - 0x48 ].begin();
+      ioAccess_ads1115[ address - 0x48 ].setSPS( ADS1115_DR_860SPS );
+      xSemaphoreGive( i2cMutex );
+      return true;
+    }
+    xSemaphoreGive( i2cMutex );
+  }
+  return false;
 }
