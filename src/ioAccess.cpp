@@ -120,12 +120,51 @@ bool ioAccessInitAsAnalogInput(uint8_t port) {
      return false;
  }
 }
-bool ioAccessInitPwmChannel(uint8_t channel){
-  return false; //TODO
+
+bool ioAccessInitPwmChannel(uint8_t channel, uint frequency){
+  switch (channel) {
+    case 0 ... 15:
+      ledcSetup(channel, frequency, 8);
+      ledcWrite(channel, 0);
+      return true;
+      break;
+    default:
+      return false;
+  }
 }
 bool ioAccessInitAttachToPwmChannel(uint8_t port, uint8_t channel){
-  return false; //TODO
+  switch (port){
+    case 0:
+    case 2:
+    case 4 ... 5:
+    case 12 ... 33: {
+        // check if pwm channel is possible
+        if (channel < 0 || channel > 15) {
+          return false;
+        }
+        // all "normal" ESP32 Outputs, excluded serial to usb even if in theory usable
+        gpio_num_t espPort = static_cast<gpio_num_t>(port);
+        gpio_pad_select_gpio(espPort);
+        gpio_intr_disable(espPort);
+        gpio_set_pull_mode(espPort, GPIO_FLOATING);
+        gpio_set_direction(espPort, GPIO_MODE_OUTPUT);
+        pinMode(port, OUTPUT);
+        ledcAttachPin(port, channel);
+      };
+      return true;
+      break;
+    default:
+      return false;
+  }}
+void ioAccessSetPwmUtil(uint8_t channel, uint8_t dutyCycle){
+  switch (channel) {
+    case 0 ... 15:
+      ledcWrite(channel, 0);
+      break;
+  }
 }
+
+
 bool ioAccessGetDigitalInput(uint8_t port){
   switch (port) {
     case 0:

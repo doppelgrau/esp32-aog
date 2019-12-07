@@ -7,10 +7,11 @@
   bool ioAccessInitAsDigitalOutput(uint8_t port);
   bool ioAccessInitAsDigitalInput(uint8_t port, bool usePullUpDown, bool pullDirectionUp);
   bool ioAccessInitAsAnalogInput(uint8_t port);
-  bool ioAccessInitPwmChannel(uint8_t channel);
+  bool ioAccessInitPwmChannel(uint8_t channel, uint frequency);
   bool ioAccessInitAttachToPwmChannel(uint8_t port, uint8_t channel);
 
   void ioAccessSetDigitalOutput(uint8_t port, bool value);
+  void ioAccessSetPwmUtil(uint8_t channel, uint8_t dutyCycle);
   bool ioAccessGetDigitalInput(uint8_t port);
   float ioAccessGetAnalogInput(uint8_t port); // scaled to -1 to 1 (or 0-1 if no negative value is possible)
 
