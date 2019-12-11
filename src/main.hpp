@@ -39,7 +39,8 @@ struct Status {
   enum class Network : uint8_t {
     disconnected,
     connecting,
-    connected
+    connected,
+    accessPoint
   } networkStatus = Network::disconnected;
 
   enum class Hardware : uint8_t {

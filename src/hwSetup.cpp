@@ -6,6 +6,7 @@
 #include <ESPUI.h>
 #include "main.hpp"
 #include "ioAccess.hpp"
+#include <ETH.h>
 
 
 DNSServer dnsServer;
@@ -37,15 +38,17 @@ void hwSetupNodeMcuCytronNmea() {
 
   // serial for GPS
 
-  // wait 3s so the user can press the button
-  delay(3000);
-  // if pressed AP, else configured network
-
   if (hwInitErrors) {
     status.hardwareStatus = Status::Hardware::error;
   } else {
     status.hardwareStatus = Status::Hardware::ok;
   }
+
+  // wait 3s so the user can press the button
+  delay(3000);
+  // if pressed AP, else configured network
+
+
 }
 
 void hwSetupF9PIoBoardNmea() {
@@ -89,28 +92,176 @@ void hwSetupF9PIoBoardNmea() {
   // todo digital Outputs
   // todo analog inputs
 
-  // network
-
   if (hwInitErrors) {
     status.hardwareStatus = Status::Hardware::error;
   } else {
     status.hardwareStatus = Status::Hardware::ok;
   }
 
+  // network
+  // web
+  hwSetupWebNetwork();
+
+  // check if button for AP is pressed
+  if (ioAccessGetDigitalInput(73) == false) {
+    hwSetupNetworkAp();
+  } else {
+    // normal networking
+    uint8_t networkSetup = preferences.getUChar("networkSetup", 0);
+    switch (networkSetup) {
+      case 1:
+         hwSetupNetworkClient();
+        break;
+      case 2:
+         hwSetupNetworkLan8720(0, -1, 23, 18);
+        break;
+      default:
+         hwSetupNetworkAp(false);
+        break;
+    }
+  }
+
+
+
 }
 
-void hwSetupNetworkAp() {
+void hwSetupNetworkAp(bool ignorePassword) {
   IPAddress localIp = IPAddress( 172, 23, 42, 1 );
   char hostname[33];
   strcpy(hostname, "ESP-AOG"); // default
   preferences.getString("networkHostname", hostname, 33);
 
+  char password[33];
+  strcpy(password, ""); // default
+  preferences.getString("networkPassword", password, 33);
+
   WiFi.setHostname( hostname );
   WiFi.mode( WIFI_AP );
-  delay(10);
+  delay(100); // lazzy, instead of waiting for SYSTEM_EVENT_AP_START
   WiFi.softAPConfig( localIp, localIp, IPAddress( 255, 255, 255, 0 ) );
-  WiFi.softAP( hostname );
+  if (ignorePassword || strlen(password) < 8) {
+    WiFi.softAP( hostname );
+  } else {
+      WiFi.softAP( hostname, password);
+  }
   dnsServer.start( 53, "*", localIp );
+  status.networkStatus = Status::Network::accessPoint;
+}
+
+void hwSetupNetworkClient() {
+  char hostname[33];
+  strcpy(hostname, "ESP-AOG"); // default
+  preferences.getString("networkHostname", hostname, 33);
+
+  char network[33];
+  strcpy(network, ""); // default
+  preferences.getString("networkSSID", network, 33);
+
+  char password[33];
+  strcpy(password, ""); // default
+  preferences.getString("networkPassword", password, 33);
+
+  // start init
+  WiFi.setHostname( hostname );
+  WiFi.mode(WIFI_STA);
+  delay(100);
+
+  char ipString[17];
+  strcpy(ipString, ""); // default
+  preferences.getString("networkIpAddress", ipString, 17);
+  IPAddress ip;
+  // valid fixed IP => configure fixed IP
+  if (ip.fromString(ipString)) {
+    char gatewayString[17];
+    strcpy(gatewayString, ""); // default
+    preferences.getString("networkIpGateway", gatewayString, 17);
+    IPAddress gateway;
+    gateway.fromString(gatewayString);
+
+    char dnsString[17];
+    strcpy(dnsString, ""); // default
+    preferences.getString("networkIpDns", dnsString, 17);
+    IPAddress dns;
+    dns.fromString(dnsString);
+
+    // configure fixed IP
+    WiFi.config(ip, dns, gateway);
+  }
+
+  WiFi.begin( network, password );
+  status.networkStatus = Status::Network::connecting;
+
+  // start "monitor" thread, simply sets teh network status nd if disconnected too long, restart
+  xTaskCreate( hwSetupWifiMonitor, "WifiMonitor", 2048, NULL, 1, NULL );
+
+}
+
+void hwSetupWifiMonitor( void* z ) {
+  // if in total 5s not connected, reboot. should resolve any wifi connection drops
+  int counter = 0;
+  while (counter < 25) {
+    if (WiFi.status() == WL_CONNECTED) {
+      status.networkStatus = Status::Network::connected;
+    } else {
+      counter++;
+    }
+    delay(200);
+  }
+  usb.println("No network, reboot");
+  ESP.restart();
+}
+
+void hwSetupNetworkLan8720(uint8_t phy_addr, int power, int mdc, int mdio) {
+  char hostname[33];
+  strcpy(hostname, "ESP-AOG"); // default
+  preferences.getString("networkHostname", hostname, 33);
+
+  // start init
+  WiFi.onEvent(hwSetupEthernetEvent);
+  ETH.begin(phy_addr, power, mdc, mdio, ETH_PHY_LAN8720, ETH_CLOCK_GPIO17_OUT);
+  ETH.setHostname( hostname );
+  delay(100);
+
+  char ipString[17];
+  strcpy(ipString, ""); // default
+  preferences.getString("networkIpAddress", ipString, 17);
+  IPAddress ip;
+  // valid fixed IP => configure fixed IP
+  if (ip.fromString(ipString)) {
+    char gatewayString[17];
+    strcpy(gatewayString, ""); // default
+    preferences.getString("networkIpGateway", gatewayString, 17);
+    IPAddress gateway;
+    gateway.fromString(gatewayString);
+
+    char dnsString[17];
+    strcpy(dnsString, ""); // default
+    preferences.getString("networkIpDns", dnsString, 17);
+    IPAddress dns;
+    dns.fromString(dnsString);
+
+    // configure fixed IP
+    ETH.config(ip, gateway, IPAddress(255, 255, 255, 0),dns, IPAddress(0, 0, 0, 0));
+  }
+}
+
+void hwSetupEthernetEvent(WiFiEvent_t event) {
+  switch (event) {
+    case SYSTEM_EVENT_ETH_START:
+      status.networkStatus = Status::Network::disconnected;
+      break;
+    case SYSTEM_EVENT_ETH_CONNECTED:
+      status.networkStatus = Status::Network::connecting;
+      break;
+    case SYSTEM_EVENT_ETH_GOT_IP:
+      status.networkStatus = Status::Network::connected;
+      break;
+    case SYSTEM_EVENT_ETH_DISCONNECTED:
+      status.networkStatus = Status::Network::disconnected;
+      break;
+    default:
+      break;
+  }
 }
 
 void hwSetupWebNetwork() {

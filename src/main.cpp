@@ -110,6 +110,9 @@ void statusLedWorker( void* z ) {
       case Status::Network::connected:
         statusLedPattern += 0b01111111111<<11;
         break;
+      case Status::Network::accessPoint:
+        statusLedPattern += 0b01110000111<<11;
+        break;
       default:
          statusLedPattern += 0b01100110011<<11;
         break;
