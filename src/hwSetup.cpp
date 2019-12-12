@@ -267,24 +267,76 @@ void hwSetupEthernetEvent(WiFiEvent_t event) {
 }
 
 void hwSetupWebNetwork() {
-  // TODO:
+  uint8_t curNetwork = preferences.getUChar("networkSetup", 0);
+  ESPUI.addControl( ControlType::Text, "Network-Hostname", preferences.getString("networkHostname", "ESP-AOG"), ControlColor::Wetasphalt, webTabHardware,
+    []( Control * control, int id ) {
+      preferences.putString("networkHostname", control->value);
+      control->color = ControlColor::Carrot;
+      ESPUI.updateControl( control );
+      webChangeNeedsReboot();
+    } );
 
-  // Client, AP, (optional) Ethernet
-
-  // Fields Hostname, IP, Gateway, DNS (if not AP)
-
-  // SSID  + Password (if Wifi)
-    switch (1) {
-      case 1:
-         (char*)"WiFi Client";
-        break;
-      case 2:
-         (char*)"Wired Ethernet";
-        break;
-      default:
-         (char*)"WiFi Access Point";
-        break;
+    uint16_t sel = ESPUI.addControl( ControlType::Select, "Network-Interface", (String)curNetwork, ControlColor::Wetasphalt, webTabHardware,
+      []( Control * control, int id ) {
+        preferences.putUChar("networkSetup", control->value.toInt());
+        control->color = ControlColor::Carrot;
+        ESPUI.updateControl( control );
+        webChangeNeedsReboot();
+      } );
+    ESPUI.addControl( ControlType::Option, "Wifi Access Point", "0", ControlColor::Alizarin, sel );
+    ESPUI.addControl( ControlType::Option, "Wifi Client", "1", ControlColor::Alizarin, sel );
+    if (hwSetupHasEthernet) {
+      ESPUI.addControl( ControlType::Option, "Wired Ethernet", "2", ControlColor::Alizarin, sel );
     }
+
+    if (curNetwork > 0) { // not AP mode
+      ESPUI.addControl( ControlType::Text, "IP Address (invalid = dhcp)", preferences.getString("networkIpAddress", "dhcp"), ControlColor::Wetasphalt, webTabHardware,
+        []( Control * control, int id ) {
+          preferences.putString("networkIpAddress", control->value);
+          control->color = ControlColor::Carrot;
+          ESPUI.updateControl( control );
+          webChangeNeedsReboot();
+        } );
+      ESPUI.addControl( ControlType::Text, "Gateway", preferences.getString("networkIpGateway", "0.0.0.0"), ControlColor::Wetasphalt, webTabHardware,
+        []( Control * control, int id ) {
+          preferences.putString("networkIpGateway", control->value);
+          control->color = ControlColor::Carrot;
+          ESPUI.updateControl( control );
+          webChangeNeedsReboot();
+        } );
+      ESPUI.addControl( ControlType::Text, "DNS Server", preferences.getString("networkIpDns", "0.0.0.0"), ControlColor::Wetasphalt, webTabHardware,
+        []( Control * control, int id ) {
+          preferences.putString("networkIpDns", control->value);
+          control->color = ControlColor::Carrot;
+          ESPUI.updateControl( control );
+          webChangeNeedsReboot();
+        } );
+    }
+
+    if (curNetwork == 0 || curNetwork == 1 ) { // Wifi
+      ESPUI.addControl( ControlType::Text, "AP Name / SSID (max. 32 char)", preferences.getString("networkSSID", ""), ControlColor::Wetasphalt, webTabHardware,
+        []( Control * control, int id ) {
+          preferences.putString("networkSSID", control->value);
+          control->color = ControlColor::Carrot;
+          ESPUI.updateControl( control );
+          webChangeNeedsReboot();
+        } );
+      ESPUI.addControl( ControlType::Text, "Wifi Password (8 - 32 char)", preferences.getString("networkPassword", ""), ControlColor::Wetasphalt, webTabHardware,
+        []( Control * control, int id ) {
+          preferences.putString("networkPassword", control->value);
+          control->color = ControlColor::Carrot;
+          ESPUI.updateControl( control );
+          webChangeNeedsReboot();
+        } );
+      ESPUI.addControl( ControlType::Text, "DNS Server", preferences.getString("networkIpDns", "0.0.0.0"), ControlColor::Wetasphalt, webTabHardware,
+        []( Control * control, int id ) {
+          preferences.putString("networkIpDns", control->value);
+          control->color = ControlColor::Carrot;
+          ESPUI.updateControl( control );
+          webChangeNeedsReboot();
+        } );
+    }
+
 }
 
 void hwSetupWebSetup() {
