@@ -113,6 +113,7 @@ void hwSetupF9PIoBoardNmea() {
          hwSetupNetworkClient();
         break;
       case 2:
+         ioAccessSetDigitalOutput(74, true);
          hwSetupNetworkLan8720(0, -1, 23, 18);
         break;
       default:
@@ -120,16 +121,17 @@ void hwSetupF9PIoBoardNmea() {
         break;
     }
   }
-
-
-
 }
 
-void hwSetupNetworkAp(bool ignorePassword) {
+void hwSetupNetworkAp(bool emergencyMode) {
   IPAddress localIp = IPAddress( 172, 23, 42, 1 );
   char hostname[33];
   strcpy(hostname, "ESP-AOG"); // default
   preferences.getString("networkHostname", hostname, 33);
+
+  char network[33];
+  strcpy(network, ""); // default
+  preferences.getString("networkSSID", network, 33);
 
   char password[33];
   strcpy(password, ""); // default
@@ -139,10 +141,10 @@ void hwSetupNetworkAp(bool ignorePassword) {
   WiFi.mode( WIFI_AP );
   delay(100); // lazzy, instead of waiting for SYSTEM_EVENT_AP_START
   WiFi.softAPConfig( localIp, localIp, IPAddress( 255, 255, 255, 0 ) );
-  if (ignorePassword || strlen(password) < 8) {
+  if (emergencyMode || strlen(password) < 8 || strlen(network) < 4) {
     WiFi.softAP( hostname );
   } else {
-      WiFi.softAP( hostname, password);
+      WiFi.softAP( network, password);
   }
   dnsServer.start( 53, "*", localIp );
   status.networkStatus = Status::Network::accessPoint;
@@ -265,6 +267,13 @@ void hwSetupEthernetEvent(WiFiEvent_t event) {
 }
 
 void hwSetupWebNetwork() {
+  // TODO:
+
+  // Client, AP, (optional) Ethernet
+
+  // Fields Hostname, IP, Gateway, DNS (if not AP)
+
+  // SSID  + Password (if Wifi)
     switch (1) {
       case 1:
          (char*)"WiFi Client";

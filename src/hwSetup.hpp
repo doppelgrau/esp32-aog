@@ -6,7 +6,7 @@
   void hwSetupNodeMcuCytronNmea();
   void hwSetupF9PIoBoardNmea();
   void hwSetupInitial();
-  void hwSetupNetworkAp(bool ignorePassword = true);
+  void hwSetupNetworkAp(bool emergencyMode = true);
   void hwSetupNetworkClient();
   void hwSetupNetworkLan8720(uint8_t phy_addr, int power, int mdc, int mdio);
   void hwSetupWebSetup();
