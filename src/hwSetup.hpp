@@ -16,4 +16,5 @@
   void hwSetupEthernetEvent(WiFiEvent_t event);
 
   extern bool hwSetupHasEthernet;
+  extern IPAddress hwSetupOwnAdress;
 #endif

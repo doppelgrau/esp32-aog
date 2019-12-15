@@ -13,6 +13,7 @@ DNSServer dnsServer;
 
 bool hwSetupHasEthernet = false;
 
+IPAddress hwSetupOwnAdress;
 
 void hwSetupInitial() {
   // WiFi
@@ -148,6 +149,7 @@ void hwSetupNetworkAp(bool emergencyMode) {
   }
   dnsServer.start( 53, "*", localIp );
   status.networkStatus = Status::Network::accessPoint;
+  hwSetupOwnAdress = localIp;
 }
 
 void hwSetupNetworkClient() {
@@ -188,10 +190,12 @@ void hwSetupNetworkClient() {
 
     // configure fixed IP
     WiFi.config(ip, dns, gateway);
+    hwSetupOwnAdress = ip;
   }
 
   WiFi.begin( network, password );
   status.networkStatus = Status::Network::connecting;
+  WiFi.setAutoReconnect(true);
 
   // start "monitor" thread, simply sets teh network status nd if disconnected too long, restart
   xTaskCreate( hwSetupWifiMonitor, "WifiMonitor", 2048, NULL, 1, NULL );
@@ -204,6 +208,7 @@ void hwSetupWifiMonitor( void* z ) {
   while (counter < 25) {
     if (WiFi.status() == WL_CONNECTED) {
       status.networkStatus = Status::Network::connected;
+      hwSetupOwnAdress = WiFi.localIP();
     } else {
       counter++;
     }
@@ -244,6 +249,7 @@ void hwSetupNetworkLan8720(uint8_t phy_addr, int power, int mdc, int mdio) {
 
     // configure fixed IP
     ETH.config(ip, gateway, IPAddress(255, 255, 255, 0),dns, IPAddress(0, 0, 0, 0));
+    hwSetupOwnAdress = ip;
   }
 }
 
@@ -257,6 +263,7 @@ void hwSetupEthernetEvent(WiFiEvent_t event) {
       break;
     case SYSTEM_EVENT_ETH_GOT_IP:
       status.networkStatus = Status::Network::connected;
+      hwSetupOwnAdress = ETH.localIP();
       break;
     case SYSTEM_EVENT_ETH_DISCONNECTED:
       status.networkStatus = Status::Network::disconnected;
