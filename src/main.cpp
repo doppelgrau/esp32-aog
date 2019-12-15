@@ -30,6 +30,7 @@
 #include "webUi.hpp"
 #include "idleStats.hpp"
 #include "ioAccess.hpp"
+#include "udpHandler.hpp"
 
 ///////////////////////////////////////////////////////////////////////////
 // global data
@@ -89,11 +90,11 @@ void setup() {
 
   // Set up some common threads
   initIdleStats();
+  udpHandlerInit();
 }
 
 
 void loop( void ) {
-  usb.println("Loop");
   vTaskDelay( 100 );
 }
 
