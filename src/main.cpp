@@ -24,6 +24,7 @@
 #include <string.h>
 #include <Preferences.h>
 #include <SoftwareSerial.h>
+#include <DNSServer.h>
 
 #include "main.hpp"
 #include "hwSetup.hpp"
@@ -95,7 +96,8 @@ void setup() {
 
 
 void loop( void ) {
-  vTaskDelay( 100 );
+  hwSetupDnsServer.processNextRequest();
+  vTaskDelay( 5 );
 }
 
 void statusLedWorker( void* z ) {

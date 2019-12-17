@@ -9,7 +9,7 @@
 #include <ETH.h>
 
 
-DNSServer dnsServer;
+DNSServer hwSetupDnsServer;
 
 bool hwSetupHasEthernet = false;
 
@@ -147,7 +147,7 @@ void hwSetupNetworkAp(bool emergencyMode) {
   } else {
       WiFi.softAP( network, password);
   }
-  dnsServer.start( 53, "*", localIp );
+  hwSetupDnsServer.start( 53, "*", localIp );
   status.networkStatus = Status::Network::accessPoint;
   hwSetupOwnAdress = localIp;
 }

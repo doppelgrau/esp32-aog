@@ -2,6 +2,8 @@
 #define hwSetup_HPP
 #include <Preferences.h>
 #include <ETH.h>
+#include <DNSServer.h>
+
 
   void hwSetupNodeMcuCytronNmea();
   void hwSetupF9PIoBoardNmea();
@@ -17,4 +19,5 @@
 
   extern bool hwSetupHasEthernet;
   extern IPAddress hwSetupOwnAdress;
+  extern DNSServer hwSetupDnsServer;
 #endif

@@ -35,14 +35,10 @@ void udpHandlerCreateReceiveHandler() {
       uint16_t pgn = data[1] + ( data[0] << 8 );
       switch ( pgn ) {
         case 0x7FFE: {
-          if (sizeof(data) / sizeof(uint8_t) >= 9) {
-            udpAogData.distanceFromGuidanceLine = data[5] + ( data[4] << 8 );
-            udpAogData.requiredSteerAngle = (( int16_t )( data[7] + ( data[6] << 8 ) )) / 100.0;
-            udpAogData.uTurnRelais = data[8];
-            udpAogData.lastReceived7FFE = millis();
-          } else {
-            usb.println("Received too short 7FFE PGN");
-          }
+          udpAogData.distanceFromGuidanceLine = data[5] + ( data[4] << 8 );
+          udpAogData.requiredSteerAngle = (( int16_t )( data[7] + ( data[6] << 8 ) )) / 100.0;
+          udpAogData.uTurnRelais = data[8];
+          udpAogData.lastReceived7FFE = millis();
         }
         break;
       }
