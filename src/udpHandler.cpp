@@ -22,8 +22,11 @@ void udpHandlerInit(){
 
   // sender
   udpHandlerSender.listen(udpPortOwn);
+  xTaskCreate( udpHandlerSendData, "UdpPGNSender", 4096, NULL, 10, NULL );
 
   // updating web UI
+  xTaskCreate( udpHandlerWebUpdate, "UdpPGNWebUi", 4096, NULL, 10, NULL );
+
 }
 
 void udpHandlerCreateReceiveHandler() {
@@ -101,7 +104,7 @@ void udpHandlerWebUpdate( void* z ) {
     str = "7FFE: ";
     str += udpHandlerTimeGenerator(udpAogData.lastReceived7FFE);
     str += "<br/>";
-    str = "7FFD: ";
+    str += "7FFD: ";
     str += udpHandlerTimeGenerator(udpActualData.lastSent);
 
     Control* labelPgnStatus = ESPUI.getControl( webLabelPgnStatus );
@@ -117,7 +120,7 @@ String udpHandlerTimeGenerator(uint last) {
   String ret;
   ret.reserve(6);
   if (last == 0 || duration > 9000000){
-    ret = "&infty;";
+    ret = "never";
   } else if (duration < 10000) {
     ret = duration;
     ret += "ms";
