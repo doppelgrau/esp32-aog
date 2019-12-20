@@ -1,12 +1,12 @@
 #include <BluetoothSerial.h>
 
 
-#ifndef gpsCommon_HPP
-#define gpsCommon_HPP
+#ifndef gpsRtcm_HPP
+#define gpsRtcm_HPP
 
 extern BluetoothSerial gpsCommonBtSerial;
 
-struct GpsCommonRtcm {
+struct GpsRtcmData {
   enum class RtcmSource : uint8_t {
     none = 0,
     UDP = 1,
@@ -20,8 +20,6 @@ struct GpsCommonRtcm {
     error = 2,
   } rtcmStatus = RtcmStatus::setup;
 
-
-
   enum class RtcmDestination : uint8_t {
     gps1 = 0,
     gps2 = 1,
@@ -29,10 +27,10 @@ struct GpsCommonRtcm {
   } rtcmDestination = RtcmDestination::gps1;
   uint lastReceived = 0;
 };
-extern GpsCommonRtcm gpsCommonRtcm;
+extern GpsRtcmData gpsRtcmData;
 
 
-struct GpsCommonNmeaOutput {
+struct GpsNmeaOutput {
   bool udpOutput = false;
   bool btOutput = false;
   bool serialOutput = false;
@@ -48,10 +46,11 @@ struct GpsCommonNmeaOutput {
 
   String lastGGA;
 };
-extern GpsCommonNmeaOutput gpsCommonNmeaOutput;
+extern GpsNmeaOutput gpsNmeaOutput;
 
-void gpsCommonCreateRtcmReceiveHandler();
-void gpsCommonBtRtcmReceiver( void* z );
-void gpsCommonNtripReceiver( void* z );
+
+void gpsRtcmCreateUdpReceiveHandler();
+void gpsRtcmBtReceiver( void* z );
+void gpsRtcmNtripReceiver( void* z );
 
 #endif
