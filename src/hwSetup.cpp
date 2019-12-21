@@ -45,6 +45,8 @@ void hwSetupNodeMcuCytronNmea() {
     status.hardwareStatus = Status::Hardware::ok;
   }
 
+  hwSetupWebNetwork();
+
   // wait 3s so the user can press the button
   delay(3000);
   // if pressed AP, else configured network
@@ -310,6 +312,23 @@ void hwSetupWebNetwork() {
       ESPUI.addControl( ControlType::Option, "Wired Ethernet", "2", ControlColor::Alizarin, sel );
     }
 
+    if (curNetwork == 0 || curNetwork == 1 ) { // Wifi
+      ESPUI.addControl( ControlType::Text, "AP Name / SSID (max. 32 char)", preferences.getString("networkSSID", ""), ControlColor::Wetasphalt, webTabHardware,
+        []( Control * control, int id ) {
+          preferences.putString("networkSSID", control->value);
+          control->color = ControlColor::Carrot;
+          ESPUI.updateControl( control );
+          webChangeNeedsReboot();
+        } );
+      ESPUI.addControl( ControlType::Text, "Wifi Password (8 - 32 char)", preferences.getString("networkPassword", ""), ControlColor::Wetasphalt, webTabHardware,
+        []( Control * control, int id ) {
+          preferences.putString("networkPassword", control->value);
+          control->color = ControlColor::Carrot;
+          ESPUI.updateControl( control );
+          webChangeNeedsReboot();
+        } );
+    }
+
     if (curNetwork > 0) { // not AP mode
       ESPUI.addControl( ControlType::Text, "IP Address (invalid = dhcp)", preferences.getString("networkIpAddress", "dhcp"), ControlColor::Wetasphalt, webTabHardware,
         []( Control * control, int id ) {
@@ -333,31 +352,6 @@ void hwSetupWebNetwork() {
           webChangeNeedsReboot();
         } );
     }
-
-    if (curNetwork == 0 || curNetwork == 1 ) { // Wifi
-      ESPUI.addControl( ControlType::Text, "AP Name / SSID (max. 32 char)", preferences.getString("networkSSID", ""), ControlColor::Wetasphalt, webTabHardware,
-        []( Control * control, int id ) {
-          preferences.putString("networkSSID", control->value);
-          control->color = ControlColor::Carrot;
-          ESPUI.updateControl( control );
-          webChangeNeedsReboot();
-        } );
-      ESPUI.addControl( ControlType::Text, "Wifi Password (8 - 32 char)", preferences.getString("networkPassword", ""), ControlColor::Wetasphalt, webTabHardware,
-        []( Control * control, int id ) {
-          preferences.putString("networkPassword", control->value);
-          control->color = ControlColor::Carrot;
-          ESPUI.updateControl( control );
-          webChangeNeedsReboot();
-        } );
-      ESPUI.addControl( ControlType::Text, "DNS Server", preferences.getString("networkIpDns", "0.0.0.0"), ControlColor::Wetasphalt, webTabHardware,
-        []( Control * control, int id ) {
-          preferences.putString("networkIpDns", control->value);
-          control->color = ControlColor::Carrot;
-          ESPUI.updateControl( control );
-          webChangeNeedsReboot();
-        } );
-    }
-
 }
 
 void hwSetupWebSetup() {
@@ -368,6 +362,7 @@ void hwSetupWebSetup() {
     uint16_t sel = ESPUI.addControl( ControlType::Select, "Hardware", "0", ControlColor::Wetasphalt, webTabHardware,
       []( Control * control, int id ) {
         preferences.putUChar("hwSetup", control->value.toInt());
+        control->color = ControlColor::Carrot;
         webChangeNeedsReboot();
       } );
     ESPUI.addControl( ControlType::Option, hwSetupHardwareIdToName(0), "0", ControlColor::Alizarin, sel );
