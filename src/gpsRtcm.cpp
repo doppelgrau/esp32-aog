@@ -1,4 +1,5 @@
 #include "gpsRtcm.hpp"
+#include "gpsNmea.hpp"
 #include "main.hpp"
 #include <Preferences.h>
 #include "webUi.hpp"
