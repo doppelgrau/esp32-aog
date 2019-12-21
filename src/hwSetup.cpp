@@ -48,6 +48,20 @@ void hwSetupNodeMcuCytronNmea() {
   // wait 3s so the user can press the button
   delay(3000);
   // if pressed AP, else configured network
+  if (ioAccessGetDigitalInput(0) == false) {
+    hwSetupNetworkAp();
+  } else {
+    // normal networking
+    uint8_t networkSetup = preferences.getUChar("networkSetup", 0);
+    switch (networkSetup) {
+      case 1:
+         hwSetupNetworkClient();
+        break;
+      default:
+         hwSetupNetworkAp(false);
+        break;
+    }
+  }
 
 
 }
