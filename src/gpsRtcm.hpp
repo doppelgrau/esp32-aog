@@ -29,6 +29,7 @@ struct GpsRtcmData {
 };
 extern GpsRtcmData gpsRtcmData;
 
+void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination);
 void gpsRtcmCreateUdpReceiveHandler();
 void gpsRtcmBtReceiver( void* z );
 void gpsRtcmNtripReceiver( void* z );

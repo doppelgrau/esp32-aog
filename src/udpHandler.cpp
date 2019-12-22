@@ -17,8 +17,9 @@ constexpr uint udpPortOwn = 5577;
 void udpHandlerInit(){
   if(! udpHandlerListener.listen(udpPortDataFromAog)) {
     usb.println ("ERROR: Starting UDP Listener for steering failed");
+  } else {
+    udpHandlerCreateReceiveHandler();
   }
-  udpHandlerCreateReceiveHandler();
 
   // sender
   udpHandlerSender.listen(udpPortOwn);
@@ -31,6 +32,21 @@ void udpHandlerInit(){
 
 void udpHandlerCreateReceiveHandler() {
   udpHandlerListener.onPacket([](AsyncUDPPacket packet) {
+    usb.print("UDP Packet Type: ");
+usb.print(packet.isBroadcast()?"Broadcast":packet.isMulticast()?"Multicast":"Unicast");
+usb.print(", From: ");
+usb.print(packet.remoteIP());
+usb.print(":");
+usb.print(packet.remotePort());
+usb.print(", To: ");
+usb.print(packet.localIP());
+usb.print(":");
+usb.print(packet.localPort());
+usb.print(", Length: ");
+usb.print(packet.length());
+usb.print(", Data: ");
+usb.write(packet.data(), packet.length());
+usb.println();
       uint8_t* data = packet.data();
       uint16_t pgn = data[1] + ( data[0] << 8 );
       switch ( pgn ) {

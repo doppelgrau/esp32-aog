@@ -96,7 +96,9 @@ void setup() {
 
 
 void loop( void ) {
-  hwSetupDnsServer.processNextRequest();
+  if (status.networkStatus == Status::Network::accessPoint) {
+    hwSetupDnsServer.processNextRequest();
+  }
   vTaskDelay( 5 );
 }
 

@@ -5,6 +5,8 @@
 #include "webUi.hpp"
 #include <ESPUI.h>
 #include "main.hpp"
+#include "gpsRtcm.hpp"
+#include "gpsNmea.hpp"
 #include "ioAccess.hpp"
 #include <ETH.h>
 
@@ -26,6 +28,7 @@ void hwSetupNodeMcuCytronNmea() {
   bool hwInitErrors = false;
 
   // for the status LED
+  ioAccessInitAsDigitalOutput(2);
   status.statusPort = 2;
 
   // I2C
@@ -37,7 +40,9 @@ void hwSetupNodeMcuCytronNmea() {
     usb.println("ERROR: Failed to initialize the ADS1115");
   }
 
-  // serial for GPS
+  // serial
+  gps1.begin(57600, SERIAL_8N1, 17, 16);
+  rs232.begin(57600, SERIAL_8N1, 9, 10);
 
   if (hwInitErrors) {
     status.hardwareStatus = Status::Hardware::error;
@@ -65,6 +70,8 @@ void hwSetupNodeMcuCytronNmea() {
     }
   }
 
+  // gps
+  gpsRtcmSetup(GpsRtcmData::RtcmDestination::gps1);
 
 }
 

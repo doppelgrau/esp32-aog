@@ -10,6 +10,8 @@
 GpsRtcmData gpsRtcmData;
 GpsNmeaOutput gpsNmeaOutput;
 AsyncUDP gpsCommonUdpSocket;
+BluetoothSerial gpsCommonBtSerial;
+
 constexpr uint gpsCommonPortDataToAog = 9999;
 constexpr uint gpsCommonPortOwn = 5588;
 

@@ -32,6 +32,8 @@ void webInitCore() {
 }
 
 void webStart() {
+  // Use SPIFFS if the ressources get a bit tough in the end, change readme in that case
+  //ESPUI.beginSPIFFS("AgOpenGPS ESP32 controler");
   ESPUI.begin("AgOpenGPS ESP32 controler");
 }
 void webChangeNeedsReboot(){
