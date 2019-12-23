@@ -1,10 +1,6 @@
 [submodule "lib/MicroNMEA"]
 	path = lib/MicroNMEA
 	url = https://github.com/eringerli/MicroNMEA.git
-[submodule "lib/ESPUI"]
-	path = lib/ESPUI
-	url = https://github.com/s00500/ESPUI/
-	branch = 2.0.0
 [submodule "lib/Adafruit_ADS1X15"]
 	path = lib/Adafruit_ADS1X15
 	url = https://github.com/soligen2010/Adafruit_ADS1X15
