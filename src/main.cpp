@@ -32,6 +32,7 @@
 #include "idleStats.hpp"
 #include "ioAccess.hpp"
 #include "udpHandler.hpp"
+#include "gpsCommon.hpp"
 
 ///////////////////////////////////////////////////////////////////////////
 // global data
@@ -89,9 +90,11 @@ void setup() {
   // set up webinterface
   webStart();
 
-  // Set up some common threads
+  // Set up some common thread
   initIdleStats();
   udpHandlerInit();
+  startGpsCommonStatus();
+
 }
 
 

@@ -40,10 +40,6 @@ void hwSetupNodeMcuCytronNmea() {
     usb.println("ERROR: Failed to initialize the ADS1115");
   }
 
-  // serial
-  gps1.begin(57600, SERIAL_8N1, 17, 16);
-  rs232.begin(57600, SERIAL_8N1, 9, 10);
-
   if (hwInitErrors) {
     status.hardwareStatus = Status::Hardware::error;
   } else {
@@ -71,8 +67,9 @@ void hwSetupNodeMcuCytronNmea() {
   }
 
   // gps
+  gpsCommonInit();
   gpsRtcmSetup(GpsRtcmData::RtcmDestination::gps1);
-
+  gpsNmeasingleReader();
 }
 
 void hwSetupF9PIoBoardNmea() {

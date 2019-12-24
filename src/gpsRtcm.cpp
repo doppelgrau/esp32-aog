@@ -1,20 +1,11 @@
 #include "gpsRtcm.hpp"
-#include "gpsNmea.hpp"
+#include "gpsCommon.hpp"
 #include "main.hpp"
 #include <Preferences.h>
 #include "webUi.hpp"
 #include <ESPUI.h>
 #include <stdio.h>
 #include <HTTPClient.h>
-
-GpsRtcmData gpsRtcmData;
-GpsNmeaOutput gpsNmeaOutput;
-AsyncUDP gpsCommonUdpSocket;
-BluetoothSerial gpsCommonBtSerial;
-
-constexpr uint gpsCommonPortDataToAog = 9999;
-constexpr uint gpsCommonPortOwn = 5588;
-
 
 
 void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
@@ -33,16 +24,16 @@ void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
   ESPUI.addControl( ControlType::Option, "Ntrip", "3", ControlColor::Alizarin, sel );
   // only ntrip needs more options
   if (gpsRtcmData.rtcmSource == GpsRtcmData::RtcmSource::Ntrip) {
-    ESPUI.addControl( ControlType::Text, "Ntrip Server", preferences.getString("gpsRtcmNtripServer", ""), ControlColor::Wetasphalt, webTabGPS,
+    ESPUI.addControl( ControlType::Text, "Ntrip Server", preferences.getString("gpsNtripServer", ""), ControlColor::Wetasphalt, webTabGPS,
       []( Control * control, int id ) {
-        preferences.putString("gpsRtcmNtripServer", control->value);
+        preferences.putString("gpsNtripServer", control->value);
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
         webChangeNeedsReboot();
       } );
-    int control = ESPUI.addControl( ControlType::Number, "Ntrip port", String(preferences.getUInt("gpsRtcmNtripPort", 2101)), ControlColor::Wetasphalt, webTabGPS,
+    int control = ESPUI.addControl( ControlType::Number, "Ntrip port", String(preferences.getUInt("gpsNtripPort", 2101)), ControlColor::Wetasphalt, webTabGPS,
       []( Control * control, int id ) {
-        preferences.putUInt("gpsRtcmNtripPort", control->value.toInt());
+        preferences.putUInt("gpsNtripPort", control->value.toInt());
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
         webChangeNeedsReboot();
@@ -50,36 +41,35 @@ void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
     ESPUI.addControl( ControlType::Min, "Min", "1", ControlColor::Peterriver, control );
     ESPUI.addControl( ControlType::Max, "Max", "65535", ControlColor::Peterriver, control );
     ESPUI.addControl( ControlType::Step, "Step", "1", ControlColor::Peterriver, control );
-    ESPUI.addControl( ControlType::Text, "Ntrip Mountpoint", preferences.getString("gpsRtcmNtripMount", ""), ControlColor::Wetasphalt, webTabGPS,
+    ESPUI.addControl( ControlType::Text, "Ntrip Mountpoint", preferences.getString("gpsNtripMount", ""), ControlColor::Wetasphalt, webTabGPS,
       []( Control * control, int id ) {
-        preferences.putString("gpsRtcmNtripMount", control->value);
+        preferences.putString("gpsNtripMount", control->value);
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
         webChangeNeedsReboot();
       } );
-    ESPUI.addControl( ControlType::Text, "Ntrip user", preferences.getString("gpsRtcmNtripUser", ""), ControlColor::Wetasphalt, webTabGPS,
+    ESPUI.addControl( ControlType::Text, "Ntrip user", preferences.getString("gpsNtripUser", ""), ControlColor::Wetasphalt, webTabGPS,
       []( Control * control, int id ) {
-        preferences.putString("gpsRtcmNtripUser", control->value);
+        preferences.putString("gpsNtripUser", control->value);
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
         webChangeNeedsReboot();
       } );
-    ESPUI.addControl( ControlType::Text, "Ntrip password", preferences.getString("gpsRtcmNtripPassword", ""), ControlColor::Wetasphalt, webTabGPS,
+    ESPUI.addControl( ControlType::Text, "Ntrip password", preferences.getString("gpsNtripPw", ""), ControlColor::Wetasphalt, webTabGPS,
       []( Control * control, int id ) {
-        preferences.putString("gpsRtcmNtripPassword", control->value);
+        preferences.putString("gpsNtripPw", control->value);
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
         webChangeNeedsReboot();
       } );
-    ESPUI.addControl( ControlType::Number, "Ntrip GGA interval", String(preferences.getUInt("gpsRtcmNtripGga", 30)), ControlColor::Wetasphalt, webTabGPS,
+    ESPUI.addControl( ControlType::Number, "Ntrip GGA interval", String(preferences.getUInt("gpsNtripGga", 30)), ControlColor::Wetasphalt, webTabGPS,
       []( Control * control, int id ) {
-        preferences.putUInt("gpsRtcmNtripPort", control->value.toInt());
+        preferences.putUInt("gpsNtripPort", control->value.toInt());
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
         webChangeNeedsReboot();
       } );
   }
-
   // init source
   switch (gpsRtcmData.rtcmSource) {
     case GpsRtcmData::RtcmSource::none:
@@ -103,8 +93,7 @@ void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
     case GpsRtcmData::RtcmSource::Ntrip:
       xTaskCreate( gpsRtcmNtripReceiver, "Ntrip Receiver", 4096, NULL, 4, NULL );
       break;
-}
-
+  }
 }
 
 void gpsRtcmCreateUdpReceiveHandler() {
@@ -147,22 +136,20 @@ void gpsRtcmNtripReceiver( void* z ) {
   String rtkCorrectionURL;
   rtkCorrectionURL.reserve( 200 );
   rtkCorrectionURL = "http://";
-
-  if ( preferences.getString("gpsRtcmNtripUser", "").length() > 1 ) {
-    rtkCorrectionURL += preferences.getString("gpsRtcmNtripUser", "");
+  if ( preferences.getString("gpsNtripUser", "").length() > 1 ) {
+    rtkCorrectionURL += preferences.getString("gpsNtripUser", "");
     rtkCorrectionURL += ":";
-    rtkCorrectionURL += preferences.getString("gpsRtcmNtripPassword", "");
+    rtkCorrectionURL += preferences.getString("gpsNtripPw", "");
     rtkCorrectionURL += "@";
   }
 
-  rtkCorrectionURL += preferences.getString("gpsRtcmNtripServer", "");
+  rtkCorrectionURL += preferences.getString("gpsNtripServer", "");
 
   rtkCorrectionURL += ":";
-  rtkCorrectionURL += preferences.getUInt("gpsRtcmNtripPort", 2101);
+  rtkCorrectionURL += preferences.getUInt("gpsNtripPort", 2101);
 
   rtkCorrectionURL += "/";
-  rtkCorrectionURL += preferences.getString("gpsRtcmNtripMount", "");
-
+  rtkCorrectionURL += preferences.getString("gpsNtripMount", "");
   if ( rtkCorrectionURL.length() <= 8 ) {
     usb.println("Abort ntrip client, too short url");
     gpsRtcmData.rtcmStatus = GpsRtcmData::RtcmStatus::error;
@@ -179,7 +166,7 @@ void gpsRtcmNtripReceiver( void* z ) {
     http.begin( rtkCorrectionURL );
     http.setUserAgent( "NTRIP CoffeetracNTRIPClient" );
     int httpCode = http.GET();
-    uint ggaInterval = preferences.getUInt("gpsRtcmNtripGga", 30) * 1000;
+    uint ggaInterval = preferences.getUInt("gpsNtripGga", 30) * 1000;
 
     if ( httpCode > 0 ) {
       // HTTP header has been send and Server response header has been handled
@@ -187,7 +174,6 @@ void gpsRtcmNtripReceiver( void* z ) {
       // file found at server
       if ( httpCode == HTTP_CODE_OK ) {
         gpsRtcmData.rtcmStatus = GpsRtcmData::RtcmStatus::working;
-
         // create buffer for read
         constexpr uint16_t buffSize = 1436;
         uint8_t* buff = ( uint8_t* )malloc( buffSize );
@@ -213,20 +199,17 @@ void gpsRtcmNtripReceiver( void* z ) {
               gps2.write( buff, c );
             }
           }
-
           // send own position to ntrip server
           if ( millis() > timeoutSendGGA ) {
             if ( gpsNmeaOutput.lastGGA.length() > 10 ) {
               if ( gpsNmeaOutput.lastGGA.lastIndexOf( '\n' ) == -1 ) {
                 gpsNmeaOutput.lastGGA += "\r\n";
               }
-
               stream->write( gpsNmeaOutput.lastGGA.c_str(), gpsNmeaOutput.lastGGA.length() );
             }
 
             timeoutSendGGA = millis() + ggaInterval;
           }
-
           vTaskDelay( 3 );
         }
       }
