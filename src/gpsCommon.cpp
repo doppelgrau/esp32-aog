@@ -56,14 +56,14 @@ void gpsCommonInit() {
 }
 
 void startGpsCommonStatus() {
-  xTaskCreate( gpsCommonStatusTask, "GPS-StatusWebUi", 4096, NULL, 2, NULL );
+  xTaskCreatePinnedToCore( gpsCommonStatusTask, "GPS-StatusWebUi", 4096, NULL, 2, NULL, 0 );
 }
 
 void gpsCommonStatusTask( void* z ) {
   constexpr TickType_t xFrequency = 1000;
 
   String str;
-  str.reserve( 65 );
+  str.reserve( 70 );
 
   while ( 1 ) {
     str = "Last sent: ";

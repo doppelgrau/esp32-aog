@@ -26,7 +26,7 @@ void udpHandlerInit(){
   xTaskCreate( udpHandlerSendData, "UdpPGNSender", 4096, NULL, 10, NULL );
 
   // updating web UI
-  xTaskCreate( udpHandlerWebUpdate, "UdpPGNWebUi", 4096, NULL, 10, NULL );
+  xTaskCreatePinnedToCore( udpHandlerWebUpdate, "UdpPGNWebUi", 4096, NULL, 10, NULL, 0 );
 
 }
 
