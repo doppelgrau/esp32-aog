@@ -112,19 +112,15 @@ void udpHandlerWebUpdate() {
   String str;
   str.reserve( 40 );
 
-  while ( 1 ) {
-    str = "7FFE: ";
-    str += udpHandlerTimeGenerator(udpAogData.lastReceived7FFE);
-    str += "<br/>";
-    str += "7FFD: ";
-    str += udpHandlerTimeGenerator(udpActualData.lastSent);
+  str = "7FFE: ";
+  str += udpHandlerTimeGenerator(udpAogData.lastReceived7FFE);
+  str += "<br/>";
+  str += "7FFD: ";
+  str += udpHandlerTimeGenerator(udpActualData.lastSent);
 
-    Control* labelPgnStatus = ESPUI.getControl( webLabelPgnStatus );
-    labelPgnStatus->value = str;
-    ESPUI.updateControl( webLabelPgnStatus );
-
-    vTaskDelay( xFrequency );
-  }
+  Control* labelPgnStatus = ESPUI.getControl( webLabelPgnStatus );
+  labelPgnStatus->value = str;
+  ESPUI.updateControl( webLabelPgnStatus );
 }
 
 String udpHandlerTimeGenerator(uint last) {

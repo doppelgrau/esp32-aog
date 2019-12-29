@@ -33,6 +33,7 @@
 #include "ioAccess.hpp"
 #include "udpHandler.hpp"
 #include "gpsCommon.hpp"
+#include "idleStats.hpp"
 
 ///////////////////////////////////////////////////////////////////////////
 // global data

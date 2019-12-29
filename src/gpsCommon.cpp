@@ -61,54 +61,51 @@ void gpsCommonStatus() {
   String str;
   str.reserve( 70 );
 
-    str = "Last sent: ";
-    if (gpsNmeaOutput.lastSent == 0) {
-      str += "never<br />";
-    } else {
-      str += millis() - gpsNmeaOutput.lastSent;
-      str += "ms<br />";
-    }
-    str += "Quality: ";
-    switch ( gpsNmeaOutput.qpsquality ) {
-      case GpsNmeaOutput::GpsQuality::none:
-        str += "No GPS Fix";
-        break;
-      case GpsNmeaOutput::GpsQuality::gps:
-        str += "GPS Fix";
-        break;
-      case GpsNmeaOutput::GpsQuality::dgps:
-        str += "DGPS Fix";
-        break;
-      case GpsNmeaOutput::GpsQuality::fixedrtk:
-        str += "RTK Fix";
-        break;
-      case GpsNmeaOutput::GpsQuality::floatrtk:
-        str += "RTK Float";
-        break;
-      default:
-        str += "?";
-        break;
-    }
-    str += "<br />RTCM: ";
-    switch ( gpsRtcmData.rtcmStatus ) {
-      case GpsRtcmData::RtcmStatus::setup:
-        str += "Setup";
-        break;
-      case GpsRtcmData::RtcmStatus::working:
-        str += "Working";
-        break;
-      case GpsRtcmData::RtcmStatus::error:
-        str += "Error";
-        break;
-      default:
-        str += "?";
-        break;
-    }
-
-    Control* labelGpsStatus = ESPUI.getControl( gpsCommonWebStatus );
-    labelGpsStatus->value = str;
-    ESPUI.updateControl( labelGpsStatus );
-
-    vTaskDelay( xFrequency );
+  str = "Last sent: ";
+  if (gpsNmeaOutput.lastSent == 0) {
+    str += "never<br />";
+  } else {
+    str += millis() - gpsNmeaOutput.lastSent;
+    str += "ms<br />";
   }
+  str += "Quality: ";
+  switch ( gpsNmeaOutput.qpsquality ) {
+    case GpsNmeaOutput::GpsQuality::none:
+      str += "No GPS Fix";
+      break;
+    case GpsNmeaOutput::GpsQuality::gps:
+      str += "GPS Fix";
+      break;
+    case GpsNmeaOutput::GpsQuality::dgps:
+      str += "DGPS Fix";
+      break;
+    case GpsNmeaOutput::GpsQuality::fixedrtk:
+      str += "RTK Fix";
+      break;
+    case GpsNmeaOutput::GpsQuality::floatrtk:
+      str += "RTK Float";
+      break;
+    default:
+      str += "?";
+      break;
+  }
+  str += "<br />RTCM: ";
+  switch ( gpsRtcmData.rtcmStatus ) {
+    case GpsRtcmData::RtcmStatus::setup:
+      str += "Setup";
+      break;
+    case GpsRtcmData::RtcmStatus::working:
+      str += "Working";
+      break;
+    case GpsRtcmData::RtcmStatus::error:
+      str += "Error";
+      break;
+    default:
+      str += "?";
+      break;
+  }
+
+  Control* labelGpsStatus = ESPUI.getControl( gpsCommonWebStatus );
+  labelGpsStatus->value = str;
+  ESPUI.updateControl( labelGpsStatus );
 }
