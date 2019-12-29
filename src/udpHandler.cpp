@@ -106,7 +106,7 @@ void udpHandlerSendData( void* z ) {
 }
 
 
-void udpHandlerWebUpdate( void* z ) {
+void udpHandlerWebUpdate() {
   constexpr TickType_t xFrequency = 1000;
 
   String str;

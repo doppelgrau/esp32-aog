@@ -46,38 +46,30 @@ bool core1IdleWorker( void ) {
   return true;
 }
 
-void idleStatsWorker( void* z ) {
-  constexpr TickType_t xFrequency = 1000;
-  TickType_t xLastWakeTime = xTaskGetTickCount();
-
+void idleStats() {
   String str;
   str.reserve( 50 );
 
-  while ( 1 ) {
-    str = "Core0: ";
-    str += 1000 - idleCtrCore0;
-    str += "‰<br/>Core1: ";
-    str += 1000 - idleCtrCore1;
-    str += "‰<br/>Uptime: ";
-    str += millis() / 1000;
-    str += "s<br/>Heap: ";
-    str += ESP.getFreeHeap()/1024;
-    str += "kB";
+  str = "Core0: ";
+  str += 1000 - idleCtrCore0;
+  str += "‰<br/>Core1: ";
+  str += 1000 - idleCtrCore1;
+  str += "‰<br/>Uptime: ";
+  str += millis() / 1000;
+  str += "s<br/>Heap: ";
+  str += ESP.getFreeHeap()/1024;
+  str += "kB";
 
-    Control* labelLoadHandle = ESPUI.getControl( webLabelLoad );
-    labelLoadHandle->value = str;
-    ESPUI.updateControl( labelLoadHandle );
+  Control* labelLoadHandle = ESPUI.getControl( webLabelLoad );
+  labelLoadHandle->value = str;
+  ESPUI.updateControl( labelLoadHandle );
 
-    idleCtrCore0 = 0;
-    idleCtrCore1 = 0;
-
-    vTaskDelayUntil( &xLastWakeTime, xFrequency );
-  }
+  idleCtrCore0 = 0;
+  idleCtrCore1 = 0;
 }
 
 
 void initIdleStats() {
   esp_register_freertos_idle_hook_for_cpu(core0IdleWorker, 0);
   esp_register_freertos_idle_hook_for_cpu(core1IdleWorker, 1);
-  xTaskCreatePinnedToCore( idleStatsWorker, "IdleStats", 4096, NULL, 10, NULL, 0 );
 }

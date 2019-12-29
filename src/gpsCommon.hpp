@@ -53,7 +53,6 @@ struct GpsNmeaOutput {
 extern GpsNmeaOutput gpsNmeaOutput;
 
 void gpsSendNmeaString(String data);
-void gpsCommonStatusTask(void* z );
+void gpsCommonStatus();
 void gpsCommonInit();
-void startGpsCommonStatus();
 #endif

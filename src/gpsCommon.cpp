@@ -55,17 +55,12 @@ void gpsCommonInit() {
   }
 }
 
-void startGpsCommonStatus() {
-  xTaskCreatePinnedToCore( gpsCommonStatusTask, "GPS-StatusWebUi", 4096, NULL, 2, NULL, 0 );
-}
-
-void gpsCommonStatusTask( void* z ) {
+void gpsCommonStatus() {
   constexpr TickType_t xFrequency = 1000;
 
   String str;
   str.reserve( 70 );
 
-  while ( 1 ) {
     str = "Last sent: ";
     if (gpsNmeaOutput.lastSent == 0) {
       str += "never<br />";
