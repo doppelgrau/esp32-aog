@@ -229,8 +229,11 @@ void hwSetupWifiMonitor( void* z ) {
     if (WiFi.status() == WL_CONNECTED) {
       status.networkStatus = Status::Network::connected;
       hwSetupOwnAdress = WiFi.localIP();
+      counter = 0;
     } else {
       counter++;
+      usb.print("No network, state: ");
+      usb.println(String(WiFi.status()));
     }
     delay(200);
   }

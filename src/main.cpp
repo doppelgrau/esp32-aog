@@ -99,7 +99,7 @@ void setup() {
 
 
 void loop( void ) {
-  if (status.networkStatus == Status::Network::accessPoint) {
+  if (status.networkStatus == Status::Network::accessPoint && WiFi.status() == WL_CONNECTED) {
     hwSetupDnsServer.processNextRequest();
   }
   vTaskDelay( 5 );
