@@ -94,21 +94,33 @@ void setup() {
   // Set up some common thread
   initIdleStats();
   udpHandlerInit();
+  xTaskCreate( statusWebWorker, "Status-Web", 2048, NULL, 1, NULL );
+
 }
 
-TickType_t lastStatusUpdate = 0;
 void loop( void ) {
   if (status.networkStatus == Status::Network::accessPoint && WiFi.status() == WL_CONNECTED) {
     hwSetupDnsServer.processNextRequest();
   }
-  TickType_t  now = xTaskGetTickCount();
-  if ( now - lastStatusUpdate >= 999) {
-    lastStatusUpdate = now;
-    gpsCommonStatus();
-    udpHandlerWebUpdate();
-    idleStats();
-  }
   vTaskDelay( 5 );
+}
+
+void statusWebWorker( void* z ) {
+  TickType_t lastStatusUpdate = 0;
+
+  while ( 1 ) {
+    TickType_t  now = xTaskGetTickCount();
+    if ( now - lastStatusUpdate >= 999) {
+      lastStatusUpdate = now;
+      idleStats();
+      delay(100);
+      gpsCommonStatus();
+      delay(100);
+      udpHandlerWebUpdate();
+      delay(100);
+    }
+    vTaskDelay( 5 );
+  }
 }
 
 void statusLedWorker( void* z ) {

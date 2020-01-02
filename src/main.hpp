@@ -20,6 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef MAIN_HPP
+#define MAIN_HPP
+
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <Wire.h>
@@ -28,9 +31,6 @@
 #include <SoftwareSerial.h>
 #include <SPI.h>
 #include <Preferences.h>
-
-#ifndef MAIN_HPP
-#define MAIN_HPP
 
 
 extern SemaphoreHandle_t i2cMutex;
@@ -58,6 +58,7 @@ extern HardwareSerial gps1;
 extern SoftwareSerial gps2;
 extern HardwareSerial rs232;
 
+
 ///////////////////////////////////////////////////////////////////////////
 // ioAccess
 ///////////////////////////////////////////////////////////////////////////
@@ -73,6 +74,7 @@ extern HardwareSerial rs232;
 // Threads
 ///////////////////////////////////////////////////////////////////////////
 void statusLedWorker( void* z );
+void statusWebWorker( void* z );
 
 ///////////////////////////////////////////////////////////////////////////
 // Helper Functions

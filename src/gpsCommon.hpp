@@ -1,10 +1,8 @@
-#include <BluetoothSerial.h>
-#include <AsyncUDP.h>
-
 #ifndef gpsCommon_HPP
 #define gpsCommon_HPP
 
-extern BluetoothSerial gpsCommonBtSerial;
+#include <AsyncUDP.h>
+
 extern AsyncUDP gpsCommonUdpSocket;
 constexpr uint gpsCommonPortDataToAog = 9999;
 constexpr uint gpsCommonPortOwn = 5588;
@@ -15,7 +13,6 @@ struct GpsRtcmData {
   enum class RtcmSource : uint8_t {
     none = 0,
     UDP = 1,
-    BlueTooth = 2,
     Ntrip = 3
   } rtcmSource = RtcmSource::none;
 
@@ -36,7 +33,6 @@ extern GpsRtcmData gpsRtcmData;
 
 struct GpsNmeaOutput {
   bool udpOutput = false;
-  bool btOutput = false;
   bool serialOutput = false;
 
   uint lastSent = 0;

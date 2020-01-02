@@ -1,7 +1,7 @@
-#include "gpsCommon.hpp"
-
 #ifndef gpsRtcm_HPP
 #define gpsRtcm_HPP
+
+#include "gpsCommon.hpp"
 
 void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination);
 void gpsRtcmCreateUdpReceiveHandler();

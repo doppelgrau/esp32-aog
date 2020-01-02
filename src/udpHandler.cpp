@@ -24,10 +24,6 @@ void udpHandlerInit(){
   // sender
   udpHandlerSender.listen(udpPortOwn);
   xTaskCreate( udpHandlerSendData, "UdpPGNSender", 4096, NULL, 10, NULL );
-
-  // updating web UI
-  xTaskCreatePinnedToCore( udpHandlerWebUpdate, "UdpPGNWebUi", 4096, NULL, 10, NULL, 0 );
-
 }
 
 void udpHandlerCreateReceiveHandler() {
@@ -107,8 +103,6 @@ void udpHandlerSendData( void* z ) {
 
 
 void udpHandlerWebUpdate() {
-  constexpr TickType_t xFrequency = 1000;
-
   String str;
   str.reserve( 40 );
 

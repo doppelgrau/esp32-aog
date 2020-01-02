@@ -1,11 +1,9 @@
-#include "gpsRtcm.hpp"
-#include "gpsCommon.hpp"
 #include "main.hpp"
 #include <Preferences.h>
-#include "webUi.hpp"
 #include <ESPUI.h>
-#include <stdio.h>
 #include <HTTPClient.h>
+#include "gpsRtcm.hpp"
+#include "webUi.hpp"
 
 
 void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
@@ -20,7 +18,6 @@ void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
     } );
   ESPUI.addControl( ControlType::Option, "None", "0", ControlColor::Alizarin, sel );
   ESPUI.addControl( ControlType::Option, "UDP", "1", ControlColor::Alizarin, sel );
-  ESPUI.addControl( ControlType::Option, "BlueTooth", "2", ControlColor::Alizarin, sel );
   ESPUI.addControl( ControlType::Option, "Ntrip", "3", ControlColor::Alizarin, sel );
   // only ntrip needs more options
   if (gpsRtcmData.rtcmSource == GpsRtcmData::RtcmSource::Ntrip) {
@@ -81,15 +78,6 @@ void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
       }
       gpsRtcmCreateUdpReceiveHandler();
       break;
-    case GpsRtcmData::RtcmSource::BlueTooth: {
-        String btName = preferences.getString("networkHostname", "ESP-AOG");
-        btName += " GPS";
-        if ( !gpsCommonBtSerial.isReady(false) && !gpsCommonBtSerial.begin(btName)) {
-          usb.println ("ERROR: Starting Bluetooth for rtcm failed");
-        }
-        xTaskCreate( gpsRtcmBtReceiver, "BT RTCM Receiver", 4096, NULL, 4, NULL );
-      }
-      break;
     case GpsRtcmData::RtcmSource::Ntrip:
       xTaskCreate( gpsRtcmNtripReceiver, "Ntrip Receiver", 4096, NULL, 4, NULL );
       break;
@@ -112,26 +100,8 @@ void gpsRtcmCreateUdpReceiveHandler() {
   );
 }
 
-void gpsRtcmBtReceiver( void* z ) {
-  while(1) {
-    while (gpsCommonBtSerial.available()) {
-      gpsRtcmData.rtcmStatus = GpsRtcmData::RtcmStatus::working;
-      byte data = (byte)gpsCommonBtSerial.read();
-      if ( gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::gps1 || gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::both ) {
-        gps1.write(data);
-      }
-      if ( gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::gps2 || gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::both ) {
-        gps2.write(data);
-      }
-    }
-    vTaskDelay( 3 / portTICK_PERIOD_MS );
-  }
-}
-
 void gpsRtcmNtripReceiver( void* z ) {
-
   vTaskDelay( 1000 );
-
 
   String rtkCorrectionURL;
   rtkCorrectionURL.reserve( 200 );

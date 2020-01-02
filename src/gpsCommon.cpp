@@ -4,7 +4,6 @@
 #include "gpsCommon.hpp"
 #include "webUi.hpp"
 
-BluetoothSerial gpsCommonBtSerial;
 int gpsCommonWebStatus;
 
 AsyncUDP gpsCommonUdpSocket;
@@ -34,30 +33,15 @@ void gpsCommonInit() {
       gpsNmeaOutput.serialOutput = (boolean)control->value.toInt();
       preferences.putBool("gpsNmeaOutSerial", gpsNmeaOutput.serialOutput);
     } );
-  gpsNmeaOutput.btOutput = preferences.getBool("gpsNmeaOutBluetooth");
-  ESPUI.addControl( ControlType::Switcher, "Bluetooth Output", String( (int)gpsNmeaOutput.btOutput ) , ControlColor::Wetasphalt, webTabGPS,
-    []( Control * control, int id ) {
-      gpsNmeaOutput.btOutput = (boolean)control->value.toInt();
-      preferences.putBool("gpsNmeaOutBluetooth", gpsNmeaOutput.btOutput);
-    } );
   // init if neccessary
   if ( gpsNmeaOutput.udpOutput ) {
     if ( !gpsCommonUdpSocket.connected() && !gpsCommonUdpSocket.listen(gpsCommonPortOwn)) {
       usb.println ("ERROR: Starting UDP Listener for sending nmea over udp failed");
     }
   }
-  if ( gpsNmeaOutput.btOutput ) {
-    String btName = preferences.getString("networkHostname", "ESP-AOG");
-    btName += " GPS";
-    if ( !gpsCommonBtSerial.isReady(false) && !gpsCommonBtSerial.begin(btName)) {
-      usb.println ("ERROR: Starting Bluetooth for nmea failed");
-    }
-  }
 }
 
 void gpsCommonStatus() {
-  constexpr TickType_t xFrequency = 1000;
-
   String str;
   str.reserve( 70 );
 
