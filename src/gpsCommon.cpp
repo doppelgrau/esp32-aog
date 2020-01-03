@@ -12,7 +12,6 @@ GpsRtcmData gpsRtcmData;
 GpsNmeaOutput gpsNmeaOutput;
 
 void gpsSendNmeaString(String data) {
-  data += "\r\n";
   if (gpsNmeaOutput.udpOutput) {
     gpsCommonUdpSocket.broadcastTo( ( uint8_t* )data.c_str(), ( uint16_t )data.length(), 9999 );
   }
@@ -96,8 +95,9 @@ void gpsCommonStatus() {
       str += "?";
       break;
   }
-
-  Control* labelGpsStatus = ESPUI.getControl( gpsCommonWebStatus );
-  labelGpsStatus->value = str;
-  ESPUI.updateControl( labelGpsStatus );
+  if (gpsCommonWebStatus != 0 ){
+    Control* labelGpsStatus = ESPUI.getControl( gpsCommonWebStatus );
+    labelGpsStatus->value = str;
+    ESPUI.updateControl( labelGpsStatus );
+  }
 }
