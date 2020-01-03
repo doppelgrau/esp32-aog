@@ -28,21 +28,6 @@ void udpHandlerInit(){
 
 void udpHandlerCreateReceiveHandler() {
   udpHandlerListener.onPacket([](AsyncUDPPacket packet) {
-    usb.print("UDP Packet Type: ");
-usb.print(packet.isBroadcast()?"Broadcast":packet.isMulticast()?"Multicast":"Unicast");
-usb.print(", From: ");
-usb.print(packet.remoteIP());
-usb.print(":");
-usb.print(packet.remotePort());
-usb.print(", To: ");
-usb.print(packet.localIP());
-usb.print(":");
-usb.print(packet.localPort());
-usb.print(", Length: ");
-usb.print(packet.length());
-usb.print(", Data: ");
-usb.write(packet.data(), packet.length());
-usb.println();
       uint8_t* data = packet.data();
       uint16_t pgn = data[1] + ( data[0] << 8 );
       switch ( pgn ) {
@@ -91,8 +76,7 @@ void udpHandlerSendData( void* z ) {
     toSend[9] = (byte)temp;
 
     //send
-    IPAddress broadcastIp = WiFi.calculateBroadcast(hwSetupOwnAdress, IPAddress(255,255,255,0));
-    if (udpHandlerSender.writeTo(toSend, sizeof(toSend), broadcastIp, udpPortDataToAog )) {
+    if (udpHandlerSender.broadcastTo( toSend, sizeof(toSend), 9999 )) {
       udpActualData.lastSent = millis();
     }
 

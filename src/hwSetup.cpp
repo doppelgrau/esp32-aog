@@ -142,6 +142,11 @@ void hwSetupF9PIoBoardNmea() {
         break;
     }
   }
+  // gps
+  gpsCommonInit();
+  gpsRtcmSetup(GpsRtcmData::RtcmDestination::gps1);
+  gpsNmeasingleReader();
+
 }
 
 void hwSetupNetworkAp(bool emergencyMode) {

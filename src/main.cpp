@@ -119,7 +119,7 @@ void statusWebWorker( void* z ) {
       udpHandlerWebUpdate();
       delay(100);
     }
-    vTaskDelay( 5 );
+    vTaskDelay( 2 );
   }
 }
 
