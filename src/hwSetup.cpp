@@ -146,7 +146,6 @@ void hwSetupF9PIoBoardNmea() {
   gpsCommonInit();
   gpsRtcmSetup(GpsRtcmData::RtcmDestination::gps1);
   gpsNmeasingleReader();
-
 }
 
 void hwSetupNetworkAp(bool emergencyMode) {

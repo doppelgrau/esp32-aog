@@ -93,9 +93,10 @@ void setup() {
 
   // Set up some common thread
   initIdleStats();
-  udpHandlerInit();
-  xTaskCreate( statusWebWorker, "Status-Web", 2048, NULL, 1, NULL );
-
+  if (hwSetup != 0) {
+    udpHandlerInit();
+    xTaskCreate( statusWebWorker, "Status-Web", 2048, NULL, 1, NULL );
+  }
 }
 
 void loop( void ) {
