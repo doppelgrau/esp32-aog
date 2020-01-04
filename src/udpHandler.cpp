@@ -44,7 +44,7 @@ void udpHandlerCreateReceiveHandler() {
 }
 
 void udpHandlerSendData( void* z ) {
-  constexpr TickType_t xFrequency = 50; // every 50ms, so data at aog is relativly current without overwhelming the process
+  constexpr TickType_t xFrequency = 100; // every 100ms, so data at aog is relativly current without overwhelming the process
 
   while ( 1 ) {
     byte toSend[] = {0x7F,0x7D,0,0,0,0,0,0,0,0}; // steering data

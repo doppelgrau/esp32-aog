@@ -106,7 +106,7 @@ void hwSetupF9PIoBoardNmea() {
   gpio_pad_select_gpio(GPIO_NUM_13);
   gpio_set_direction(GPIO_NUM_13, GPIO_MODE_OUTPUT);
   gpio_set_pull_mode(GPIO_NUM_13, GPIO_FLOATING);
-  gps1.begin(57600, SERIAL_8N1, 14, 13);
+  gps1.begin(115200, SERIAL_8N1, 14, 13);
   rs232.begin(57600, SERIAL_8N1, 16, 15);
 
   // todo motor

@@ -74,7 +74,7 @@ void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
       break;
     case GpsRtcmData::RtcmSource::UDP:
       if ( !gpsCommonUdpSocket.connected() && !gpsCommonUdpSocket.listen(gpsCommonPortOwn)) {
-        usb.println ("ERROR: Starting UDP Listener for rtcm failed");
+        usb.println("ERROR: Starting UDP Listener for rtcm failed");
       }
       gpsRtcmCreateUdpReceiveHandler();
       break;
@@ -85,6 +85,7 @@ void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
 }
 
 void gpsRtcmCreateUdpReceiveHandler() {
+  usb.println("Creating handler for RTCM Data");
   gpsCommonUdpSocket.onPacket([](AsyncUDPPacket packet) {
       gpsRtcmData.rtcmStatus = GpsRtcmData::RtcmStatus::working;
       while (packet.peek() != -1) {
