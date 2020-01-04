@@ -14,7 +14,7 @@ Port 47 ADS1115 Adress 0x48 Differential Port 1/3
 Port 48 ADS1115 Adress 0x48 Differential Port 2/3
 Port 47-72 reserved for other possible ADS adresses
 Port 73-80 FXL6408 Address 0x43
-Port 71-88 FXL6408 Address 0x44
+Port 81-88 FXL6408 Address 0x44
 
 ##
 ## PWM Channel
@@ -42,7 +42,7 @@ bool ioAccessInitAsDigitalOutput(uint8_t port) {
       return true;
       break;
     case 73 ... 88:
-      return ioAccess_FXL6408_configureAsDigitalOutput((0x43 + (port - 65) / 8), ((port - 65) % 8));
+      return ioAccess_FXL6408_configureAsDigitalOutput((0x43 + (port - 73) / 8), ((port - 73) % 8));
       break;
     default:
       return false;
@@ -64,7 +64,7 @@ void ioAccessSetDigitalOutput(uint8_t port, bool value) {
       };
       break;
     case 73 ... 88:
-      return ioAccess_FXL6408_setDigitalOutput((0x43 + (port - 65) / 8), ((port - 65) % 8), value);
+      return ioAccess_FXL6408_setDigitalOutput((0x43 + (port - 73) / 8), ((port - 73) % 8), value);
       break;
   }
 }
@@ -94,7 +94,7 @@ bool ioAccessInitAsDigitalInput(uint8_t port, bool usePullUpDown, bool pullDirec
       return true;
       break;
     case 73 ... 88:
-      return ioAccess_FXL6408_configureAsDigitalInput((0x43 + (port - 65) / 8), ((port - 65) % 8), usePullUpDown, pullDirectionUp);
+      return ioAccess_FXL6408_configureAsDigitalInput((0x43 + (port - 73) / 8), ((port - 73) % 8), usePullUpDown, pullDirectionUp);
       break;
     default:
       return false;
@@ -173,6 +173,9 @@ bool ioAccessGetDigitalInput(uint8_t port){
     case 12 ... 39:
       return digitalRead(port);
       break;
+      case 73 ... 88:
+        return ioAccess_FXL6408_getDigitalInput((0x43 + (port - 73) / 8), ((port - 73) % 8));
+        break;
     default:
       return false;
   }
@@ -276,12 +279,12 @@ bool ioAccess_FXL6408_getDigitalInput(byte i2cAddress, uint8_t port)  {
  }
 
   uint8_t ioAccess_FXL6408_getByteI2C(byte i2cAddress, int i2cregister) {
-    uint8_t result;
+    uint8_t result = -1;
     if ( xSemaphoreTake( i2cMutex, 1000 ) == pdTRUE ) {
       Wire.beginTransmission(i2cAddress);
       Wire.write(i2cregister);
       Wire.endTransmission(false);
-      uint8_t state = Wire.requestFrom(i2cAddress, 1, (int)true);
+      Wire.requestFrom(i2cAddress, 1, (int)true);
       result = Wire.read();
       xSemaphoreGive( i2cMutex );
     }

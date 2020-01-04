@@ -124,25 +124,33 @@ void hwSetupF9PIoBoardNmea() {
   hwSetupWebNetwork();
 
   // check if button for AP is pressed
+  usb.println("INFO: Set up network");
   if (ioAccessGetDigitalInput(73) == false) {
+    usb.println("INFO: Setup button has been pressed, use hotspot mode.");
     hwSetupNetworkAp();
   } else {
     // normal networking
     uint8_t networkSetup = preferences.getUChar("networkSetup", 0);
+    usb.print("INFO: network configuration: ");
+    usb.println((int)networkSetup);
     switch (networkSetup) {
       case 1:
+        usb.println("INFO: Network mode: WiFi client");
          hwSetupNetworkClient();
         break;
       case 2:
+         usb.println("INFO: Network mode: Ethernet (wired)");
          ioAccessSetDigitalOutput(74, true);
          hwSetupNetworkLan8720(0, -1, 23, 18);
         break;
       default:
+         usb.println("INFO: Network mode: WiFi Access Point");
          hwSetupNetworkAp(false);
         break;
     }
   }
   // gps
+  usb.println("INFO: Set up a single nmea GPS-Interface on gps1");
   gpsCommonInit();
   gpsRtcmSetup(GpsRtcmData::RtcmDestination::gps1);
   gpsNmeasingleReader();
@@ -200,6 +208,8 @@ void hwSetupNetworkClient() {
   IPAddress ip;
   // valid fixed IP => configure fixed IP
   if (ip.fromString(ipString)) {
+    usb.print("INFO: WiFi Client uses fixed IP: ");
+    usb.println(ipString);
     char gatewayString[17];
     strcpy(gatewayString, ""); // default
     preferences.getString("networkIpGateway", gatewayString, 17);
@@ -215,6 +225,8 @@ void hwSetupNetworkClient() {
     // configure fixed IP
     WiFi.config(ip, dns, gateway);
     hwSetupOwnAdress = ip;
+  } else {
+    usb.println("INFO: WiFi Client used dhcp");
   }
 
   WiFi.begin( network, password );
