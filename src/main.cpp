@@ -66,6 +66,9 @@ void setup() {
   usb.println("\tHW-Setup Webinterface");
   hwSetupWebSetup();
 
+  // common parts for gps
+  gpsCommonInit();
+
   // start LED-Task early, so it can be used for the HW-setup
   xTaskCreate( statusLedWorker, "Status-LED", 2048, NULL, 1, NULL );
 
@@ -88,6 +91,10 @@ void setup() {
       hwSetupInitial();
       break;
   }
+
+  // generic initializations
+  inputsSwitchesInit();
+
 
   // set up webinterface
   webStart();
