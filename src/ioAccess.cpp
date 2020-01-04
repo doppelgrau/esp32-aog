@@ -5,7 +5,6 @@
 ##
 ## IO Ports
 ##
-Port 255 has special meaning (not configured)
 Port 0-40 reserved for the respective ports on an esp32
 Port 41-44 ADS1115 Adress 0x48 Port 0-3
 Port 45 ADS1115 Adress 0x48 Differential Port 0/1
@@ -16,6 +15,9 @@ Port 47-72 reserved for other possible ADS adresses
 Port 73-80 FXL6408 Address 0x43
 Port 81-88 FXL6408 Address 0x44
 
+Port 253 has special meaning, always false/0.0
+Port 254 has special meaning, always true/1.0
+Port 255 has special meaning (not configured)
 ##
 ## PWM Channel
 ##
@@ -23,7 +25,7 @@ Channel 0-15 ESP32
 */
 
 Adafruit_ADS1115 ioAccess_ads1115[4];
-
+void (*ioAccessWebListAnalogIn)(int *);
 
 bool ioAccessInitAsDigitalOutput(uint8_t port) {
   switch (port) {
@@ -173,9 +175,15 @@ bool ioAccessGetDigitalInput(uint8_t port){
     case 12 ... 39:
       return digitalRead(port);
       break;
-      case 73 ... 88:
-        return ioAccess_FXL6408_getDigitalInput((0x43 + (port - 73) / 8), ((port - 73) % 8));
-        break;
+    case 73 ... 88:
+      return ioAccess_FXL6408_getDigitalInput((0x43 + (port - 73) / 8), ((port - 73) % 8));
+      break;
+    case 253:
+      return false;
+      break;
+    case 254:
+      return true;
+      break;
     default:
       return false;
   }
@@ -205,6 +213,12 @@ float ioAccessGetAnalogInput(uint8_t port){
             break;
           case 7:
             return ioAccess_ads1115[adsNumber].readADC_Differential_2_3() / 32768.0;
+            break;
+          case 253:
+            return 0.0;
+            break;
+          case 254:
+            return 1.0;
             break;
           default:
             return -3;

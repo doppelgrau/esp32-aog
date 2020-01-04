@@ -34,6 +34,7 @@
 #include "udpHandler.hpp"
 #include "gpsCommon.hpp"
 #include "idleStats.hpp"
+#include "network.hpp"
 
 ///////////////////////////////////////////////////////////////////////////
 // global data

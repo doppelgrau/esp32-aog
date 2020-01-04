@@ -26,4 +26,6 @@
   extern Adafruit_ADS1115 ioAccess_FXL6408_Output[4];
   bool ioAccess_ads1115_init(uint8_t address) ;
 
+  // helper for Webinterface, parameter is allways the parent element for the pulldown
+  extern void (*ioAccessWebListAnalogIn)(int *);
 #endif
