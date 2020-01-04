@@ -10,5 +10,5 @@
   void hwSetupInitial();
   void hwSetupWebSetup();
   char* hwSetupHardwareIdToName(uint8_t setup);
-
+  void hwSetupF9PIoBoardWebAnalogIn(int parent);
 #endif

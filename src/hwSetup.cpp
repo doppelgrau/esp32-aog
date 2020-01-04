@@ -7,6 +7,7 @@
 #include "gpsNmea.hpp"
 #include "ioAccess.hpp"
 #include "network.hpp"
+#include "inputs.hpp"
 
 
 
@@ -104,7 +105,8 @@ void hwSetupF9PIoBoardNmea() {
 
   // todo motor
   // todo digital Outputs
-  // todo analog inputs
+  // analog inputs
+  ioAccessWebListAnalogIn = &hwSetupF9PIoBoardWebAnalogIn;
 
   if (hwInitErrors) {
     status.hardwareStatus = Status::Hardware::error;
@@ -147,6 +149,21 @@ void hwSetupF9PIoBoardNmea() {
   gpsCommonInit();
   gpsRtcmSetup(GpsRtcmData::RtcmDestination::gps1);
   gpsNmeasingleReader();
+  inputsSwitchesInit();
+
+}
+
+void hwSetupF9PIoBoardWebAnalogIn(int parent) {
+  ESPUI.addControl( ControlType::Option, "I1", "36", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "I2", "39", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "I3", "34", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "A0 (Ref GND)", "41", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "A0 (Ref 5V)",  "46", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "A0 (Ref A1)",  "45", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "A1 (Ref GND)", "42", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "A1 (Ref 5V)",  "47", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "A2 (Ref GND)", "43", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "A2 (Ref 5V)",  "48", ControlColor::Alizarin, parent );
 }
 
 void hwSetupWebSetup() {

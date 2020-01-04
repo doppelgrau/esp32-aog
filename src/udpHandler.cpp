@@ -50,7 +50,7 @@ void udpHandlerSendData( void* z ) {
     byte toSend[] = {0x7F,0x7D,0,0,0,0,0,0,0,0}; // steering data
 
     // steer angles
-    int temp = round(100 * udpActualData.steerAngleActual);
+    int16_t temp = round(100 * udpActualData.steerAngleActual);
     toSend[2] = (byte)(temp >> 8);
     toSend[3] = (byte)(temp);
 

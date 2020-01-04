@@ -27,5 +27,5 @@
   bool ioAccess_ads1115_init(uint8_t address) ;
 
   // helper for Webinterface, parameter is allways the parent element for the pulldown
-  extern void (*ioAccessWebListAnalogIn)(int *);
+  extern void (*ioAccessWebListAnalogIn)(int);
 #endif
