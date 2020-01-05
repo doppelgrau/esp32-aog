@@ -7,7 +7,6 @@
 #include "gpsNmea.hpp"
 #include "ioAccess.hpp"
 #include "network.hpp"
-#include "inputs.hpp"
 
 
 
@@ -61,6 +60,7 @@ void hwSetupNodeMcuCytronNmea() {
   }
 
   // gps
+  gpsCommonInit();
   gpsRtcmSetup(GpsRtcmData::RtcmDestination::gps1);
   gpsNmeasingleReader();
 }
@@ -145,6 +145,7 @@ void hwSetupF9PIoBoardNmea() {
   }
   // gps
   usb.println("INFO: Set up a single nmea GPS-Interface on gps1");
+  gpsCommonInit();
   gpsRtcmSetup(GpsRtcmData::RtcmDestination::gps1);
   gpsNmeasingleReader();
 

@@ -35,6 +35,7 @@
 #include "gpsCommon.hpp"
 #include "idleStats.hpp"
 #include "network.hpp"
+#include "inputs.hpp"
 
 ///////////////////////////////////////////////////////////////////////////
 // global data
@@ -66,9 +67,6 @@ void setup() {
   usb.println("\tHW-Setup Webinterface");
   hwSetupWebSetup();
 
-  // common parts for gps
-  gpsCommonInit();
-
   // start LED-Task early, so it can be used for the HW-setup
   xTaskCreate( statusLedWorker, "Status-LED", 2048, NULL, 1, NULL );
 
@@ -94,7 +92,7 @@ void setup() {
 
   // generic initializations
   inputsSwitchesInit();
-
+  inputsWheelAngleInit();
 
   // set up webinterface
   webStart();
@@ -124,6 +122,8 @@ void statusWebWorker( void* z ) {
       gpsCommonStatus();
       delay(100);
       udpHandlerWebUpdate();
+      delay(100);
+      inputsWheelAngleStatusUpdate();
       delay(100);
     }
     vTaskDelay( 2 );
