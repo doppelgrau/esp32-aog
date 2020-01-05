@@ -199,35 +199,61 @@ float ioAccessGetAnalogInput(uint8_t port){
         uint8_t adsNumber = (port - 41) / 8;
         uint8_t diffCombination = (port - 41) % 8;
         switch (diffCombination) {
-          case 0 ... 3:
-            return ioAccess_ads1115[adsNumber].readADC_SingleEnded(diffCombination) / 32768.0;
+          case 0 ... 3: {
+              if ( xSemaphoreTake( i2cMutex, 1000 ) == pdTRUE ) {
+                float value = ioAccess_ads1115[adsNumber].readADC_SingleEnded(diffCombination) / 32768.0;
+                xSemaphoreGive( i2cMutex );
+                return value;
+              }
+            }
             break;
-          case 4:
-            return ioAccess_ads1115[adsNumber].readADC_Differential_0_1() / 32768.0;
+          case 4: {
+              if ( xSemaphoreTake( i2cMutex, 1000 ) == pdTRUE ) {
+                float value = ioAccess_ads1115[adsNumber].readADC_Differential_0_1() / 32768.0;
+                xSemaphoreGive( i2cMutex );
+                return value;
+              }
+            }
             break;
-          case 5:
-            return ioAccess_ads1115[adsNumber].readADC_Differential_0_3() / 32768.0;
+          case 5: {
+              if ( xSemaphoreTake( i2cMutex, 1000 ) == pdTRUE ) {
+                float value = ioAccess_ads1115[adsNumber].readADC_Differential_0_3() / 32768.0;
+                xSemaphoreGive( i2cMutex );
+                return value;
+              }
+            }
             break;
-          case 6:
-            return ioAccess_ads1115[adsNumber].readADC_Differential_1_3() / 32768.0;
+          case 6: {
+              if ( xSemaphoreTake( i2cMutex, 1000 ) == pdTRUE ) {
+                float value = ioAccess_ads1115[adsNumber].readADC_Differential_1_3() / 32768.0;
+                xSemaphoreGive( i2cMutex );
+                return value;
+              }
+            }
             break;
-          case 7:
-            return ioAccess_ads1115[adsNumber].readADC_Differential_2_3() / 32768.0;
-            break;
-          case 253:
-            return 0.0;
-            break;
-          case 254:
-            return 1.0;
+          case 7: {
+              if ( xSemaphoreTake( i2cMutex, 1000 ) == pdTRUE ) {
+                float value = ioAccess_ads1115[adsNumber].readADC_Differential_2_3() / 32768.0;
+                xSemaphoreGive( i2cMutex );
+                return value;
+              }
+            }
             break;
           default:
             return -3;
         }
       }
       break;
+    case 253:
+      return 0.0;
+      break;
+    case 254:
+      return 1.0;
+      break;
     default:
       return -2;
   }
+  return -5;
 }
 
 
