@@ -8,7 +8,7 @@
 // init webinterface and start task for the uturn relais
 void uturnInit() {
   // Webinterface
-  uint16_t sel = ESPUI.addControl( ControlType::Select, "Relay 1", (String)preferences.getUChar("uturnR1", 255), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+  uint16_t sel = ESPUI.addControl( ControlType::Select, "Relay 1", (String)preferences.getUChar("uturnR1", 255), ControlColor::Wetasphalt, webTabUturn,
     []( Control * control, int id ) {
       preferences.putUChar("uturnR1", control->value.toInt());
       control->color = ControlColor::Carrot;
@@ -18,7 +18,7 @@ void uturnInit() {
   ESPUI.addControl( ControlType::Option, "None", "255", ControlColor::Alizarin, sel );
   ioAccessWebListDigitalOut(sel);
 
-  sel = ESPUI.addControl( ControlType::Select, "Relay 2", (String)preferences.getUChar("uturnR2", 255), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+  sel = ESPUI.addControl( ControlType::Select, "Relay 2", (String)preferences.getUChar("uturnR2", 255), ControlColor::Wetasphalt, webTabUturn,
     []( Control * control, int id ) {
       preferences.putUChar("uturnR2", control->value.toInt());
       control->color = ControlColor::Carrot;
@@ -28,7 +28,7 @@ void uturnInit() {
   ESPUI.addControl( ControlType::Option, "None", "255", ControlColor::Alizarin, sel );
   ioAccessWebListDigitalOut(sel);
 
-  sel = ESPUI.addControl( ControlType::Select, "Relay 3", (String)preferences.getUChar("uturnR3", 255), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+  sel = ESPUI.addControl( ControlType::Select, "Relay 3", (String)preferences.getUChar("uturnR3", 255), ControlColor::Wetasphalt, webTabUturn,
     []( Control * control, int id ) {
       preferences.putUChar("uturnR3", control->value.toInt());
       control->color = ControlColor::Carrot;
@@ -38,7 +38,7 @@ void uturnInit() {
   ESPUI.addControl( ControlType::Option, "None", "255", ControlColor::Alizarin, sel );
   ioAccessWebListDigitalOut(sel);
 
-  sel = ESPUI.addControl( ControlType::Select, "Relay 4", (String)preferences.getUChar("uturnR4", 255), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+  sel = ESPUI.addControl( ControlType::Select, "Relay 4", (String)preferences.getUChar("uturnR4", 255), ControlColor::Wetasphalt, webTabUturn,
     []( Control * control, int id ) {
       preferences.putUChar("uturnR4", control->value.toInt());
       control->color = ControlColor::Carrot;
@@ -48,7 +48,7 @@ void uturnInit() {
   ESPUI.addControl( ControlType::Option, "None", "255", ControlColor::Alizarin, sel );
   ioAccessWebListDigitalOut(sel);
 
-  sel = ESPUI.addControl( ControlType::Select, "Relay 5", (String)preferences.getUChar("uturnR5", 255), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+  sel = ESPUI.addControl( ControlType::Select, "Relay 5", (String)preferences.getUChar("uturnR5", 255), ControlColor::Wetasphalt, webTabUturn,
     []( Control * control, int id ) {
       preferences.putUChar("uturnR5", control->value.toInt());
       control->color = ControlColor::Carrot;
@@ -58,7 +58,7 @@ void uturnInit() {
   ESPUI.addControl( ControlType::Option, "None", "255", ControlColor::Alizarin, sel );
   ioAccessWebListDigitalOut(sel);
 
-  sel = ESPUI.addControl( ControlType::Select, "Relay 6", (String)preferences.getUChar("uturnR6", 255), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+  sel = ESPUI.addControl( ControlType::Select, "Relay 6", (String)preferences.getUChar("uturnR6", 255), ControlColor::Wetasphalt, webTabUturn,
     []( Control * control, int id ) {
       preferences.putUChar("uturnR6", control->value.toInt());
       control->color = ControlColor::Carrot;
