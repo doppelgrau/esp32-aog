@@ -36,6 +36,7 @@
 #include "idleStats.hpp"
 #include "network.hpp"
 #include "inputs.hpp"
+#include "uturn.hpp"
 
 ///////////////////////////////////////////////////////////////////////////
 // global data
@@ -93,6 +94,7 @@ void setup() {
   // generic initializations
   inputsSwitchesInit();
   inputsWheelAngleInit();
+  uturnInit();
 
   // set up webinterface
   webStart();

@@ -106,6 +106,7 @@ void hwSetupF9PIoBoardNmea() {
   // todo digital Outputs
   // analog inputs
   ioAccessWebListAnalogIn = &hwSetupF9PIoBoardWebAnalogIn;
+  ioAccessWebListDigitalOut = &hwSetupF9PIoBoardWebDigitalOut;
 
   if (hwInitErrors) {
     status.hardwareStatus = Status::Hardware::error;
@@ -163,6 +164,13 @@ void hwSetupF9PIoBoardWebAnalogIn(int parent) {
   ESPUI.addControl( ControlType::Option, "A2 (Ref GND)", "43", ControlColor::Alizarin, parent );
   ESPUI.addControl( ControlType::Option, "A2 (Ref 5V)",  "48", ControlColor::Alizarin, parent );
 }
+
+void hwSetupF9PIoBoardWebDigitalOut(int parent) {
+  ESPUI.addControl( ControlType::Option, "M2A", "77", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "M2B", "78", ControlColor::Alizarin, parent );
+  ESPUI.addControl( ControlType::Option, "Relay", "76", ControlColor::Alizarin, parent );
+}
+
 
 void hwSetupWebSetup() {
   uint8_t hw = preferences.getUChar("hwSetup");

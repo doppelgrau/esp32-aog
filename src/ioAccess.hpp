@@ -28,4 +28,5 @@
 
   // helper for Webinterface, parameter is allways the parent element for the pulldown
   extern void (*ioAccessWebListAnalogIn)(int);
+  extern void (*ioAccessWebListDigitalOut)(int);
 #endif
