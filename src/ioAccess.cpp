@@ -27,6 +27,7 @@ Channel 0-15 ESP32
 Adafruit_ADS1115 ioAccess_ads1115[4];
 void (*ioAccessWebListAnalogIn)(int);
 void (*ioAccessWebListDigitalOut)(int);
+void (*ioAccessMotor1)(int);
 
 bool ioAccessInitAsDigitalOutput(uint8_t port) {
   switch (port) {

@@ -29,4 +29,8 @@
   // helper for Webinterface, parameter is allways the parent element for the pulldown
   extern void (*ioAccessWebListAnalogIn)(int);
   extern void (*ioAccessWebListDigitalOut)(int);
+
+  // helper for hwSetupF9PIoBoardMotor1
+  extern void (*ioAccessMotor1)(int);
+
 #endif

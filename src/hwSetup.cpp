@@ -102,8 +102,21 @@ void hwSetupF9PIoBoardNmea() {
   gps1.begin(115200, SERIAL_8N1, 14, 13);
   rs232.begin(57600, SERIAL_8N1, 16, 15);
 
-  // todo motor
-  // todo digital Outputs
+  // motor
+  ioAccessInitAsDigitalOutput(79);
+  ioAccessInitAsDigitalOutput(80);
+  ioAccessInitPwmChannel(0, 5000);
+  ioAccessInitAttachToPwmChannel(4, 0);
+   ioAccessMotor1 = &hwSetupF9PIoBoardMotor1;
+
+  // digital Outputs
+  ioAccessInitAsDigitalOutput(76);
+  ioAccessInitAsDigitalOutput(77);
+  ioAccessInitAsDigitalOutput(78);
+  ioAccessInitAsDigitalOutput(12);
+  ioAccessSetDigitalOutput(12, true); // PWM pin von M2 auf high => directes schalten von M2A/M2B
+
+
   // analog inputs
   ioAccessWebListAnalogIn = &hwSetupF9PIoBoardWebAnalogIn;
   ioAccessWebListDigitalOut = &hwSetupF9PIoBoardWebDigitalOut;
@@ -169,6 +182,26 @@ void hwSetupF9PIoBoardWebDigitalOut(int parent) {
   ESPUI.addControl( ControlType::Option, "M2A", "77", ControlColor::Alizarin, parent );
   ESPUI.addControl( ControlType::Option, "M2B", "78", ControlColor::Alizarin, parent );
   ESPUI.addControl( ControlType::Option, "Relay", "76", ControlColor::Alizarin, parent );
+}
+
+void hwSetupF9PIoBoardMotor1(int pwm) {
+  bool direction = pwm > 1;
+  pwm = abs(pwm);
+
+  if (pwm == 0) { // zero => both off
+    ioAccessSetDigitalOutput(79, false);
+    ioAccessSetDigitalOutput(80, false);
+  } else {
+    if (direction) {
+      ioAccessSetDigitalOutput(79, true);
+      ioAccessSetDigitalOutput(80, false);
+    } else {
+      ioAccessSetDigitalOutput(79, false);
+      ioAccessSetDigitalOutput(80, true);
+    }
+  }
+  ioAccessSetPwmUtil(0, pwm); // set duty cycle
+
 }
 
 
