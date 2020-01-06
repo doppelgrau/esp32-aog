@@ -75,7 +75,7 @@ void uturnInit() {
 
 // against gliches/noise: two values must show same value for a change + a hysteresis
 void uturnTask(void *z) {
-  uint lastUpdate;
+  uint lastUpdate = 0;
   uint8_t ports [6];
   ports[0] = preferences.getUChar("uturnR1", 255);
   ports[1] = preferences.getUChar("uturnR2", 255);

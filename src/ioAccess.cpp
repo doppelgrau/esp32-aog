@@ -127,7 +127,7 @@ bool ioAccessInitAsAnalogInput(uint8_t port) {
 bool ioAccessInitPwmChannel(uint8_t channel, uint frequency){
   switch (channel) {
     case 0 ... 15:
-      ledcSetup(channel, frequency, 8);
+      ledcSetup(channel, frequency, 10);
       ledcWrite(channel, 0);
       return true;
       break;
@@ -159,7 +159,7 @@ bool ioAccessInitAttachToPwmChannel(uint8_t port, uint8_t channel){
     default:
       return false;
   }}
-void ioAccessSetPwmUtil(uint8_t channel, uint8_t dutyCycle){
+void ioAccessSetPwmUtil(uint8_t channel, int dutyCycle){
   switch (channel) {
     case 0 ... 15:
       ledcWrite(channel, 0);
