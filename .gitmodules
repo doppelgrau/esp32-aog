@@ -8,3 +8,6 @@
 	path = lib/ESPUI
 	url = https://github.com/s00500/ESPUI/
 	branch = 2.0.0
+[submodule "lib/AutoPID"]
+	path = lib/AutoPID
+	url = https://github.com/doppelgrau/AutoPID
