@@ -181,7 +181,7 @@ void inputsWheelAngleInit() {
   ESPUI.addControl( ControlType::Option, "None", "255", ControlColor::Alizarin, sel );
   ioAccessWebListAnalogIn(sel);
   inputsWasSetup.invertSensor = preferences.getBool("inputsWasInv");
-  ESPUI.addControl( ControlType::Switcher, "Invert Signal", String( (int)inputsWasSetup.invertSensor ) , ControlColor::Wetasphalt, webTabGPS,
+  ESPUI.addControl( ControlType::Switcher, "Invert Signal", String( (int)inputsWasSetup.invertSensor ) , ControlColor::Wetasphalt, webTabSteeringAngle,
     []( Control * control, int id ) {
       inputsWasSetup.invertSensor = (boolean)control->value.toInt();
       preferences.putBool("inputsWasInv", inputsWasSetup.invertSensor);
