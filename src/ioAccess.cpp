@@ -163,7 +163,7 @@ bool ioAccessInitAttachToPwmChannel(uint8_t port, uint8_t channel){
 void ioAccessSetPwmUtil(uint8_t channel, int dutyCycle){
   switch (channel) {
     case 0 ... 15:
-      ledcWrite(channel, 0);
+      ledcWrite(channel, dutyCycle);
       break;
   }
 }
