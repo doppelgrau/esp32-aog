@@ -121,13 +121,13 @@ void statusWebWorker( void* z ) {
     if ( now - lastStatusUpdate >= 999) {
       lastStatusUpdate = now;
       idleStats();
-      delay(100);
+      delay(150);
       gpsCommonStatus();
-      delay(100);
+      delay(150);
       udpHandlerWebUpdate();
-      delay(100);
+      delay(150);
       inputsWheelAngleStatusUpdate();
-      delay(100);
+      delay(150);
     }
     vTaskDelay( 2 );
   }
