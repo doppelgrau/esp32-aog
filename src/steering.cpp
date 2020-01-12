@@ -32,7 +32,7 @@ void steeringInit() {
   steeringSettings.type = (SteeringCurrentSettings::SteeringType)preferences.getUChar("steeringType", 0);
   sel = ESPUI.addControl( ControlType::Select, "Output Type", String((int)steeringSettings.type) , ControlColor::Wetasphalt, webTabSteeringActuator,
     []( Control * control, int id ) {
-      preferences.putUChar("steeringPortEn", control->value.toInt());
+      preferences.putUChar("steeringType", control->value.toInt());
       control->color = ControlColor::Carrot;
       ESPUI.updateControl( control );
       webChangeNeedsReboot();
