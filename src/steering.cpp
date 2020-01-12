@@ -147,6 +147,7 @@ void steeringTask( void* z ) {
 
     // handle the "testPWM" case
     if (steeringSettings.testMinPwm) {
+      isActive = true;
       if ( (millis() % 2048 ) < 1024 ) {
         pidOutput = 1; // set to a minimal value, for a second each direction
       } else {
