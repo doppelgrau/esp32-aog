@@ -5,7 +5,7 @@
 
 struct UdpFromAogData {
   uint lastReceived7FFE;
-  int16_t distanceFromGuidanceLine;
+  int16_t distanceFromGuidanceLine = 32020;
   float requiredSteerAngle;
   byte uTurnRelais;
 };
@@ -17,8 +17,8 @@ struct UdpActualData {
   float steerAngleActual;
 
   bool workSwitch;
-  bool steerSwitch;
-  bool remoteSwitch;
+  bool steerSwitch = false; // safe init
+  bool remoteSwitch; // unused
 
   int16_t pwm;
 

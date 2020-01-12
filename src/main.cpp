@@ -37,6 +37,7 @@
 #include "network.hpp"
 #include "inputs.hpp"
 #include "uturn.hpp"
+#include "steering.hpp"
 
 ///////////////////////////////////////////////////////////////////////////
 // global data
@@ -95,7 +96,7 @@ void setup() {
   inputsSwitchesInit();
   inputsWheelAngleInit();
   uturnInit();
-
+  steeringInit();
   // set up webinterface
   webStart();
 
