@@ -32,7 +32,9 @@ void hwSetupNodeMcuCytronNmea() {
     hwInitErrors = true;
     usb.println("ERROR: Failed to initialize the ADS1115");
   }
-
+  //internal ADC
+  analogReadResolution(10);
+  
   if (hwInitErrors) {
     status.hardwareStatus = Status::Hardware::error;
   } else {
@@ -91,6 +93,9 @@ void hwSetupF9PIoBoardNmea() {
     hwInitErrors = true;
     usb.println("ERROR: Failed to initialize the ADS1115");
   }
+
+  //internal ADC
+  analogReadResolution(10);
 
   // serial
   gpio_pad_select_gpio(GPIO_NUM_14);

@@ -7,6 +7,7 @@
 
 int inputsWasWebStatus;
 InputsWasData inputsWasSetup;
+InputsSwitchesConfig inputsSwitchesSetup;
 
 // filter for steering angle
 // http://www.schwietering.com/jayduino/filtuino/index.php?characteristic=bu&passmode=lp&order=2&usesr=usesr&sr=100&frequencyLow=5&noteLow=&noteHigh=&pw=pw&calctype=float&run=Send
@@ -37,57 +38,65 @@ class  FilterBuLp2_3 {
 void inputsSwitchesInit() {
   // Webinterface
   // Workswitch
-  uint16_t sel = ESPUI.addControl( ControlType::Select, "Workswitch input", (String)preferences.getUChar("inputsWsIo", 253), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+  inputsSwitchesSetup.workSwitchPort = preferences.getUChar("inputsWsIo", 253);
+  uint16_t sel = ESPUI.addControl( ControlType::Select, "Workswitch input", (String)inputsSwitchesSetup.workSwitchPort, ControlColor::Wetasphalt, webTabWorkSteerSwitch,
     []( Control * control, int id ) {
-      preferences.putUChar("inputsWsIo", control->value.toInt());
+      inputsSwitchesSetup.workSwitchPort = control->value.toInt();
+      preferences.putUChar("inputsWsIo", inputsSwitchesSetup.workSwitchPort);
       control->color = ControlColor::Carrot;
       ESPUI.updateControl( control );
-      webChangeNeedsReboot();
     } );
   ESPUI.addControl( ControlType::Option, "True", "254", ControlColor::Alizarin, sel );
   ESPUI.addControl( ControlType::Option, "False", "253", ControlColor::Alizarin, sel );
   ioAccessWebListAnalogIn(sel);
 
-  ESPUI.addControl( ControlType::Number, "Workswitch switch-point in %", String(preferences.getUInt("inputsWsSp", 50)), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+  inputsSwitchesSetup.workSwitchThreshold = preferences.getUChar("inputsWsSp", 50);
+  ESPUI.addControl( ControlType::Number, "Workswitch switch-point in %", String(inputsSwitchesSetup.workSwitchThreshold), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
     []( Control * control, int id ) {
-      preferences.putUInt("inputsWsSp", control->value.toInt());
+      inputsSwitchesSetup.workSwitchThreshold = control->value.toInt();
+      preferences.putUChar("inputsWsSp", inputsSwitchesSetup.workSwitchThreshold);
       control->color = ControlColor::Carrot;
       ESPUI.updateControl( control );
-      webChangeNeedsReboot();
     } );
 
     // Steer switch
-    sel = ESPUI.addControl( ControlType::Select, "Steerswitch input", (String)preferences.getUChar("inputsSsIo", 253), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+    inputsSwitchesSetup.steerSwitchPort = preferences.getUChar("inputsSsIo", 253);
+    sel = ESPUI.addControl( ControlType::Select, "Steerswitch input", (String)inputsSwitchesSetup.steerSwitchPort, ControlColor::Wetasphalt, webTabWorkSteerSwitch,
       []( Control * control, int id ) {
-        preferences.putUChar("inputsSsIo", control->value.toInt());
+        inputsSwitchesSetup.steerSwitchPort = control->value.toInt();
+        preferences.putUChar("inputsSsIo", inputsSwitchesSetup.steerSwitchPort);
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
-        webChangeNeedsReboot();
       } );
     ESPUI.addControl( ControlType::Option, "True", "254", ControlColor::Alizarin, sel );
     ESPUI.addControl( ControlType::Option, "False", "253", ControlColor::Alizarin, sel );
     ioAccessWebListAnalogIn(sel);
 
-    ESPUI.addControl( ControlType::Number, "Steerswitch switch-point in %", String(preferences.getUInt("inputsSsSp", 50)), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+    inputsSwitchesSetup.steerSwitchThreshold = preferences.getUChar("inputsSsSp", 50);
+    ESPUI.addControl( ControlType::Number, "Steerswitch switch-point in %", String(inputsSwitchesSetup.steerSwitchThreshold), ControlColor::Wetasphalt, webTabWorkSteerSwitch,
       []( Control * control, int id ) {
-        preferences.putUInt("inputsWsSp", control->value.toInt());
+        inputsSwitchesSetup.steerSwitchThreshold = control->value.toInt();
+        preferences.putUInt("inputsWsSp", inputsSwitchesSetup.steerSwitchThreshold);
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
-        webChangeNeedsReboot();
       } );
 
-    ESPUI.addControl( ControlType::Switcher, "Steerswitch invert value", String( (int)preferences.getBool("inputsSsInv") ) , ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+    inputsSwitchesSetup.steerSwitchInvert = preferences.getBool("inputsSsInv");
+    ESPUI.addControl( ControlType::Switcher, "Steerswitch invert value", String( (int)inputsSwitchesSetup.steerSwitchInvert ) , ControlColor::Wetasphalt, webTabWorkSteerSwitch,
       []( Control * control, int id ) {
-        preferences.putBool("inputsSsInv", (boolean)control->value.toInt());
+        inputsSwitchesSetup.steerSwitchInvert = (boolean)control->value.toInt();
+        preferences.putBool("inputsSsInv", inputsSwitchesSetup.steerSwitchInvert );
         control->color = ControlColor::Carrot;
-        webChangeNeedsReboot();
+        ESPUI.updateControl( control );
       } );
 
-    ESPUI.addControl( ControlType::Switcher, "Steerswitch is button", String( (int)preferences.getBool("inputsSsButton") ) , ControlColor::Wetasphalt, webTabWorkSteerSwitch,
+    inputsSwitchesSetup.steerSwitchIsButton = preferences.getBool("inputsSsButton");
+    ESPUI.addControl( ControlType::Switcher, "Steerswitch is button", String( (int)inputsSwitchesSetup.steerSwitchIsButton ) , ControlColor::Wetasphalt, webTabWorkSteerSwitch,
       []( Control * control, int id ) {
-        preferences.putBool("inputsSsButton", (boolean)control->value.toInt());
+        inputsSwitchesSetup.steerSwitchIsButton = (boolean)control->value.toInt();
+        preferences.putBool("inputsSsButton", inputsSwitchesSetup.steerSwitchIsButton );
         control->color = ControlColor::Carrot;
-        webChangeNeedsReboot();
+        ESPUI.updateControl( control );
       } );
 
     // start task
@@ -99,19 +108,12 @@ void inputsSwitchesTask(void *z) {
   bool steerSwitchLastValidState = false;
   bool steerSwitchLastState = false;
   bool workSwitchLastState = false;
-  bool steerSwitchIsButton = preferences.getBool("inputsSsButton");
-  bool steerSwitchInvert  = preferences.getBool("inputsSsInv");
-  uint8_t steerSwitchThreshold = preferences.getUInt("inputsSsSp", 50);
-  uint8_t workSwitchThreshold = preferences.getUInt("inputsWsSp", 50);
-  uint8_t steerSwitchPort = preferences.getUInt("inputsSsIo", 253);
-  uint8_t workSwitchPort = preferences.getUInt("inputsWsIo", 253);
-
 
   for ( ;; ) {
     // workSwitch
-    float currentValue = fabs(ioAccessGetAnalogInput(workSwitchPort));
+    float currentValue = fabs(ioAccessGetAnalogInput(inputsSwitchesSetup.workSwitchPort));
     if (udpActualData.workSwitch) {
-      if (currentValue < ((workSwitchThreshold - inputsHysteresis)/100.0)) {
+      if (currentValue < ((inputsSwitchesSetup.workSwitchThreshold - inputsHysteresis)/100.0)) {
         if (workSwitchLastState == false) {
           udpActualData.workSwitch = false;
         }
@@ -120,7 +122,7 @@ void inputsSwitchesTask(void *z) {
         workSwitchLastState = true;
       }
     } else { // current workswitch false
-      if (currentValue > ((workSwitchThreshold + inputsHysteresis)/100.0)) {
+      if (currentValue > ((inputsSwitchesSetup.workSwitchThreshold + inputsHysteresis)/100.0)) {
         if (workSwitchLastState == true) {
           udpActualData.workSwitch = true;
         }
@@ -131,19 +133,19 @@ void inputsSwitchesTask(void *z) {
     }
 
     // steerswitch
-    currentValue = fabs(ioAccessGetAnalogInput(steerSwitchPort));
-    if (steerSwitchInvert) { // invert the raw value => hysteresislogic has only one case, also the "rising edge" logik for the button
+    currentValue = fabs(ioAccessGetAnalogInput(inputsSwitchesSetup.steerSwitchPort));
+    if (inputsSwitchesSetup.steerSwitchInvert) { // invert the raw value => hysteresislogic has only one case, also the "rising edge" logik for the button
       currentValue = 1.0 - currentValue;
     }
     bool newValue = steerSwitchLastValidState;
     if (steerSwitchLastValidState) {
-      if (currentValue < ((steerSwitchThreshold - inputsHysteresis)/100.0)) {
+      if (currentValue < ((inputsSwitchesSetup.steerSwitchThreshold - inputsHysteresis)/100.0)) {
         newValue = false;
       } else {
         newValue = true;
       }
     } else { // current steerswitch false
-      if (currentValue > ((steerSwitchThreshold + inputsHysteresis)/100.0)) {
+      if (currentValue > ((inputsSwitchesSetup.steerSwitchThreshold + inputsHysteresis)/100.0)) {
         newValue = true;
       } else {
         newValue = false;
@@ -151,14 +153,14 @@ void inputsSwitchesTask(void *z) {
     }
     if (!steerSwitchLastValidState && steerSwitchLastState && newValue) { // false => true
       steerSwitchLastValidState = true;
-      if (steerSwitchIsButton) {
+      if (inputsSwitchesSetup.steerSwitchIsButton) {
         udpActualData.steerSwitch = !udpActualData.steerSwitch;
       } else {
         udpActualData.steerSwitch = true;
       }
     } else if (steerSwitchLastValidState && !steerSwitchLastState && !newValue) { // true => false
       steerSwitchLastValidState = false;
-      if (!steerSwitchIsButton) {
+      if (!inputsSwitchesSetup.steerSwitchIsButton) {
         udpActualData.steerSwitch = false;
       }
     }
@@ -171,9 +173,11 @@ void inputsSwitchesTask(void *z) {
 // calculates wheel angle
 void inputsWheelAngleInit() {
   inputsWasWebStatus = ESPUI.addControl( ControlType::Label, "Status:", "", ControlColor::Turquoise, webTabSteeringAngle );
-  uint16_t sel = ESPUI.addControl( ControlType::Select, "Wheel angle sensor input", (String)preferences.getUChar("inputsWasIo", 255), ControlColor::Wetasphalt, webTabSteeringAngle,
+  inputsWasSetup.inputPort = preferences.getUChar("inputsWasIo", 255);
+  uint16_t sel = ESPUI.addControl( ControlType::Select, "Wheel angle sensor input", (String)inputsWasSetup.inputPort, ControlColor::Wetasphalt, webTabSteeringAngle,
     []( Control * control, int id ) {
-      preferences.putUChar("inputsWasIo", control->value.toInt());
+      inputsWasSetup.inputPort = control->value.toInt();
+      preferences.putUChar("inputsWasIo", inputsWasSetup.inputPort);
       control->color = ControlColor::Carrot;
       ESPUI.updateControl( control );
       webChangeNeedsReboot();
@@ -196,9 +200,11 @@ void inputsWheelAngleInit() {
       ESPUI.updateControl( control );
     } );
 
-  sel = ESPUI.addControl( ControlType::Select, "Correktion", (String)preferences.getUChar("inputsWasCorr", 0), ControlColor::Wetasphalt, webTabSteeringAngle,
+  inputsWasSetup.correction = preferences.getUChar("inputsWasCorr", 0);
+  sel = ESPUI.addControl( ControlType::Select, "Correktion", (String)inputsWasSetup.correction, ControlColor::Wetasphalt, webTabSteeringAngle,
     []( Control * control, int id ) {
-      preferences.putUChar("inputsWasCorr", control->value.toInt());
+      inputsWasSetup.correction = control->value.toInt();
+      preferences.putUChar("inputsWasCorr", inputsWasSetup.correction);
       control->color = ControlColor::Carrot;
       ESPUI.updateControl( control );
       webChangeNeedsReboot();
@@ -209,19 +215,21 @@ void inputsWheelAngleInit() {
   sel = preferences.getUChar("inputsWasCorr", 0);
   if ( sel == 1 || sel == 2) {
     // data for Ackermann korrection
-    ESPUI.addControl( ControlType::Number, "Wheelbase (cm)", (String)preferences.getInt("inputsWasWB", 450), ControlColor::Wetasphalt, webTabSteeringAngle,
+    inputsWasSetup.wheelbase = preferences.getInt("inputsWasWB", 450);
+    ESPUI.addControl( ControlType::Number, "Wheelbase (cm)", (String)inputsWasSetup.wheelbase, ControlColor::Wetasphalt, webTabSteeringAngle,
       []( Control * control, int id ) {
-        preferences.putInt("inputsWasWB", control->value.toInt());
+        inputsWasSetup.wheelbase = control->value.toInt();
+        preferences.putInt("inputsWasWB", inputsWasSetup.wheelbase);
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
-        webChangeNeedsReboot();
       } );
-    ESPUI.addControl( ControlType::Number, "Track width (cm)", (String)preferences.getInt("inputsWasTW", 200), ControlColor::Wetasphalt, webTabSteeringAngle,
+    inputsWasSetup.trackWidth = preferences.getInt("inputsWasTW", 200);
+    ESPUI.addControl( ControlType::Number, "Track width (cm)", (String)inputsWasSetup.trackWidth, ControlColor::Wetasphalt, webTabSteeringAngle,
       []( Control * control, int id ) {
-        preferences.putInt("inputsWasTW", control->value.toInt());
+        inputsWasSetup.trackWidth = control->value.toInt();
+        preferences.putInt("inputsWasTW", inputsWasSetup.trackWidth);
         control->color = ControlColor::Carrot;
         ESPUI.updateControl( control );
-        webChangeNeedsReboot();
       } );
   } // end of ackermann
   inputsWasSetup.degreMultiplier = preferences.getFloat("inputsWasMult", 75.5);
@@ -241,12 +249,8 @@ xTaskCreate( inputsWheelAngleTask, "WAS", 4096, NULL, 8, NULL );
 void inputsWheelAngleTask(void *z) {
   constexpr TickType_t xFrequency = 20;
   TickType_t xLastWakeTime = xTaskGetTickCount();
-  int wheelbase = preferences.getInt("inputsWasWB", 450);
-  int trackWidth = preferences.getInt("inputsWasTW", 200);
-  uint8_t correction = preferences.getUChar("inputsWasCorr", 0);
-  uint8_t inputPort = preferences.getUChar("inputsWasIo", 255);
   while (1) {
-    float newInput = fabs(ioAccessGetAnalogInput(inputPort)); // use fabs is the signal goes to negative numbers, eg. uses 5V for preferences
+    float newInput = fabs(ioAccessGetAnalogInput(inputsWasSetup.inputPort)); // use fabs is the signal goes to negative numbers, eg. uses 5V for preferences
     inputsWasSetup.statusRaw = newInput;
     if (inputsWasSetup.invertSensor) {
       newInput = 1 - newInput;
@@ -259,23 +263,23 @@ void inputsWheelAngleTask(void *z) {
     inputsWasSetup.statusDegrees = newInput;
 
     // Ackermann (ignore everything below 0,5°)
-    if ( (correction == 1  || correction == 2 ) && (newInput > 0.5 || newInput < 0.5)) {
+    if ( (inputsWasSetup.correction == 1  || inputsWasSetup.correction == 2 ) && (newInput > 0.5 || newInput < -0.5)) {
       // just for the human, nicer names
       bool negativeAngle = newInput < 0;
       float mathAngle = abs(newInput) * PI / 180;
 
       // calculate the distance of the adjacent side of the triangle (turning point rear axle <-> turn circle center)
-      float distance = wheelbase / tan( mathAngle );
+      float distance = inputsWasSetup.wheelbase / tan( mathAngle );
       // add or substract half the trackWidth
-      if ( ( negativeAngle && correction == 1 )
-          || ( ! negativeAngle && correction == 2 ) ) {
-          distance += trackWidth / 2;
+      if ( ( negativeAngle && inputsWasSetup.correction == 1 )
+          || ( ! negativeAngle && inputsWasSetup.correction == 2 ) ) {
+          distance += inputsWasSetup.trackWidth / 2;
       } else {
-        distance -= trackWidth / 2;
+        distance -= inputsWasSetup.trackWidth / 2;
       }
 
       // now calculate the virtual wheel in the center
-      mathAngle = atan(wheelbase / distance);
+      mathAngle = atan(inputsWasSetup.wheelbase / distance);
 
       // convert back to degrees and add go back to negative/positive
       if (negativeAngle) {
