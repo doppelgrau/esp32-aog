@@ -62,7 +62,7 @@ void hwSetupNetworkClient() {
 
   char ipString[17];
   strcpy(ipString, ""); // default
-  preferences.getString("networkIpAddress", ipString, 17);
+  preferences.getString("networkIpAddr", ipString, 17);
   IPAddress ip;
   // valid fixed IP => configure fixed IP
   if (ip.fromString(ipString)) {
@@ -70,7 +70,7 @@ void hwSetupNetworkClient() {
     usb.println(ipString);
     char gatewayString[17];
     strcpy(gatewayString, ""); // default
-    preferences.getString("networkIpGateway", gatewayString, 17);
+    preferences.getString("networkIpGw", gatewayString, 17);
     IPAddress gateway;
     gateway.fromString(gatewayString);
 
@@ -132,13 +132,13 @@ void hwSetupNetworkLan8720(uint8_t phy_addr, int power, int mdc, int mdio) {
 
   char ipString[17];
   strcpy(ipString, ""); // default
-  preferences.getString("networkIpAddress", ipString, 17);
+  preferences.getString("networkIpAddr", ipString, 17);
   IPAddress ip;
   // valid fixed IP => configure fixed IP
   if (ip.fromString(ipString)) {
     char gatewayString[17];
     strcpy(gatewayString, ""); // default
-    preferences.getString("networkIpGateway", gatewayString, 17);
+    preferences.getString("networkIpGw", gatewayString, 17);
     IPAddress gateway;
     gateway.fromString(gatewayString);
 
@@ -215,16 +215,16 @@ void hwSetupWebNetwork() {
     }
 
     if (curNetwork > 0) { // not AP mode
-      ESPUI.addControl( ControlType::Text, "IP Address (invalid = dhcp)", preferences.getString("networkIpAddress", "dhcp"), ControlColor::Wetasphalt, webTabHardware,
+      ESPUI.addControl( ControlType::Text, "IP Address (invalid = dhcp)", preferences.getString("networkIpAddr", "dhcp"), ControlColor::Wetasphalt, webTabHardware,
         []( Control * control, int id ) {
-          preferences.putString("networkIpAddress", control->value);
+          preferences.putString("networkIpAddr", control->value);
           control->color = ControlColor::Carrot;
           ESPUI.updateControl( control );
           webChangeNeedsReboot();
         } );
-      ESPUI.addControl( ControlType::Text, "Gateway", preferences.getString("networkIpGateway", "0.0.0.0"), ControlColor::Wetasphalt, webTabHardware,
+      ESPUI.addControl( ControlType::Text, "Gateway", preferences.getString("networkIpGw", "0.0.0.0"), ControlColor::Wetasphalt, webTabHardware,
         []( Control * control, int id ) {
-          preferences.putString("networkIpGateway", control->value);
+          preferences.putString("networkIpGw", control->value);
           control->color = ControlColor::Carrot;
           ESPUI.updateControl( control );
           webChangeNeedsReboot();
