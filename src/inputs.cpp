@@ -195,23 +195,20 @@ void inputsSwitchesTask(void *z) {
         newValue = false;
       }
     }
-    if (steerEnabledLastState) {
-      if (!steerSwitchLastValidState && steerSwitchLastState && newValue) { // false => true
-        steerSwitchLastValidState = true;
-        if (inputsSwitchesSetup.steerSwitchIsButton) {
+    if (steerEnabledLastState) { // we might steer
+      if (inputsSwitchesSetup.steerSwitchIsButton) { //button
+        if (!steerSwitchLastValidState && steerSwitchLastState && newValue) { // false => true
+          steerSwitchLastValidState = true;
           udpActualData.steerSwitch = !udpActualData.steerSwitch;
-        } else {
-          udpActualData.steerSwitch = true;
+        } else if (steerSwitchLastValidState && !steerSwitchLastState && !newValue) { // true => false
+          steerSwitchLastValidState = false;
         }
-      } else if (steerSwitchLastValidState && !steerSwitchLastState && !newValue) { // true => false
-        steerSwitchLastValidState = false;
-        if (!inputsSwitchesSetup.steerSwitchIsButton) {
-          udpActualData.steerSwitch = false;
-        }
+      } else { // no button
+          if (steerSwitchLastState && newValue) {
+            udpActualData.steerSwitch = true;
+          } else if (!steerSwitchLastState && !newValue) {
+            udpActualData.steerSwitch = true;
       }
-    } else {
-      udpActualData.steerSwitch = false;
-    }
     steerSwitchLastState = newValue;
 
     vTaskDelay( 16 );
