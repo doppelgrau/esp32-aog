@@ -69,7 +69,7 @@ void imuInit() {
         ESPUI.updateControl( control );
       } );
     imuSettings.mountingYaw = preferences.getFloat("imuYaw", imuSettings.mountingYaw);
-    ESPUI.addControl( ControlType::Number, "Mounting correction Roll", (String)imuSettings.mountingYaw, ControlColor::Wetasphalt, webTabIMU,
+    ESPUI.addControl( ControlType::Number, "Mounting correction Yaw", (String)imuSettings.mountingYaw, ControlColor::Wetasphalt, webTabIMU,
       []( Control * control, int id ) {
         imuSettings.mountingYaw = control->value.toFloat();
         preferences.putFloat("imuYaw", imuSettings.mountingYaw);
@@ -338,10 +338,19 @@ void imuTask(void *z) {
                       mahony.getYawRadians());
       }
       imuHeading = imuHeading * correction;
-      double heading, placeholder;
-      imuHeading.to_euler_rotation(&heading, &placeholder, &placeholder);
+      double heading, p1, p2;
+      imuHeading.to_euler_rotation(&heading, &p1, &p2);
       heading *= 57.2957795131; //180/pi
       heading = fmod(heading + 360, 360);
+      if (debugImu && (debugCounter % 50) == 0) {
+        usb.print("heading: ");
+        usb.print(heading);
+        usb.print(" p1: ");
+        usb.print(p1 * 57.2957795131);
+        usb.print(" p2: ");
+        usb.println(p2 * 57.2957795131);
+      }
+
       imuSettings.heading = headingFilter.step((float)heading);
       if (imuSettings.sendHeading) {
         udpActualData.heading = imuSettings.heading;
