@@ -207,8 +207,12 @@ void inputsSwitchesTask(void *z) {
           if (steerSwitchLastState && newValue) {
             udpActualData.steerSwitch = true;
           } else if (!steerSwitchLastState && !newValue) {
-            udpActualData.steerSwitch = true;
+            udpActualData.steerSwitch = false;
+          }
       }
+    } else {
+      udpActualData.steerSwitch = false;
+    }
     steerSwitchLastState = newValue;
 
     vTaskDelay( 16 );
