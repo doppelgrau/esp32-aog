@@ -86,7 +86,7 @@ void gpsRtcmSetup(GpsRtcmData::RtcmDestination rtcmdestination) {
 
 void gpsRtcmCreateUdpReceiveHandler() {
   usb.println("Creating handler for RTCM Data");
-  gpsCommonUdpSocket.onPacket([](AsyncUDPPacket packet) {
+  gpsCommonUdpSocket.onPacket([](AsyncUDPPacket &packet) {
       gpsRtcmData.rtcmStatus = GpsRtcmData::RtcmStatus::working;
       while (packet.peek() != -1) {
         byte data = (byte)packet.read();

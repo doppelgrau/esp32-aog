@@ -27,7 +27,7 @@ void udpHandlerInit(){
 }
 
 void udpHandlerCreateReceiveHandler() {
-  udpHandlerListener.onPacket([](AsyncUDPPacket packet) {
+  udpHandlerListener.onPacket([](AsyncUDPPacket &packet) {
       uint8_t* data = packet.data();
       uint16_t pgn = data[1] + ( data[0] << 8 );
       switch ( pgn ) {
