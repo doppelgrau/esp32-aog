@@ -128,15 +128,14 @@ void statusWebWorker( void* z ) {
     if ( now - lastStatusUpdate >= 999) {
       lastStatusUpdate = now;
       idleStats();
-      delay(150);
+      delay(200);
       gpsCommonStatus();
-      delay(150);
+      delay(200);
       udpHandlerWebUpdate();
-      delay(150);
+      delay(200);
       inputsWheelAngleStatusUpdate();
-      delay(150);
+      delay(200);
       imuStatusUpdate();
-      delay(150);
     }
     vTaskDelay( 2 );
   }
