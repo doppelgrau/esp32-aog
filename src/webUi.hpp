@@ -5,7 +5,8 @@
 #define WEBUI_HPP
 
 extern uint16_t webLabelLoad;
-extern uint16_t webLabelPgnStatus;
+extern uint16_t webLabelCommStatus;
+extern uint16_t webLabelInputStatus;
 extern uint16_t webButtonReboot;
 
 extern uint16_t webTabHardware;

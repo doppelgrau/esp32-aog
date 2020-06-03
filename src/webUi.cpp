@@ -2,7 +2,8 @@
 #include "webUi.hpp"
 
 uint16_t webLabelLoad;
-uint16_t webLabelPgnStatus;
+uint16_t webLabelCommStatus;
+uint16_t webLabelInputStatus;
 uint16_t webButtonReboot;
 
 uint16_t webTabHardware;
@@ -15,7 +16,8 @@ uint16_t webTabWorkSteerSwitch;
 
 void webInitCore() {
   webLabelLoad = ESPUI.addControl( ControlType::Label, "Load:", "", ControlColor::Turquoise );
-  webLabelPgnStatus = ESPUI.addControl( ControlType::Label, "PGNs:", "", ControlColor::Turquoise );
+  webLabelCommStatus = ESPUI.addControl( ControlType::Label, "Communication:", "", ControlColor::Turquoise );
+  webLabelInputStatus = ESPUI.addControl( ControlType::Label, "Inputs:", "", ControlColor::Turquoise );
   webButtonReboot = ESPUI.addControl( ControlType::Button, "If this turn red, you have to", "Reboot", ControlColor::Emerald, Control::noParent,
     []( Control * control, int id ) {
       if ( id == B_UP ) {

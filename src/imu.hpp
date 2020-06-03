@@ -17,6 +17,5 @@ extern ImuSettings imuSettings;
 
 void imuInit();
 void imuTask(void *z);
-void imuStatusUpdate();
 
 #endif

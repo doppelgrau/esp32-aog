@@ -69,7 +69,7 @@ void imuInit() {
         ESPUI.updateControl( control );
       } );
     imuSettings.invertRoll = preferences.getBool("imuInvRoll");
-    ESPUI.addControl( ControlType::Switcher, "Send IMU roll", String( (int)imuSettings.invertRoll ) , ControlColor::Wetasphalt, webTabIMU,
+    ESPUI.addControl( ControlType::Switcher, "Invert IMU roll", String( (int)imuSettings.invertRoll ) , ControlColor::Wetasphalt, webTabIMU,
       []( Control * control, int id ) {
         imuSettings.invertRoll = (boolean)control->value.toInt();
         preferences.putBool("imuInvRoll", imuSettings.invertRoll );
@@ -125,7 +125,7 @@ void imuTask(void *z) {
   } rollFilter;
 
   // debug
-  const bool debugImu = true;
+  const bool debugImu = false;
   int debugCounter = 0;
 
   // loop
@@ -168,20 +168,4 @@ void imuTask(void *z) {
   }
 
 
-}
-
-void imuStatusUpdate() {
-  String str;
-  str.reserve( 50 );
-  str = "Roll: ";
-  if (imuReadData) {
-    str += String(imuSettings.roll,1);
-  } else {
-    str += "NA";
-  }
-  if (imuReadData){
-    Control* label = ESPUI.getControl( imuWebStatus );
-    label->value = str;
-    ESPUI.updateControl( imuWebStatus );
-  }
 }

@@ -23,8 +23,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <Preferences.h>
-#include <SoftwareSerial.h>
+// #include <SoftwareSerial.h>
 #include <DNSServer.h>
+#include <ESPUI.h>
 
 #include "main.hpp"
 #include "hwSetup.hpp"
@@ -49,7 +50,7 @@ Preferences preferences;
 
 HardwareSerial usb(Serial);
 HardwareSerial gps1(Serial1);
-SoftwareSerial gps2;
+// SoftwareSerial gps2;
 HardwareSerial rs232(Serial2);
 
 void setup() {
@@ -110,7 +111,7 @@ void setup() {
   // Set up some common thread
   initIdleStats();
   udpHandlerInit();
-  xTaskCreate( statusWebWorker, "Status-Web", 2048, NULL, 1, NULL );
+  //xTaskCreate( statusWebWorker, "Status-Web", 2048, NULL, 1, NULL );
 }
 
 void loop( void ) {
@@ -128,17 +129,91 @@ void statusWebWorker( void* z ) {
     if ( now - lastStatusUpdate >= 999) {
       lastStatusUpdate = now;
       idleStats();
-      delay(200);
-      gpsCommonStatus();
-      delay(200);
-      udpHandlerWebUpdate();
-      delay(200);
-      inputsWheelAngleStatusUpdate();
-      delay(200);
-      imuStatusUpdate();
+      delay(350);
+      statusCommunication();
+      delay(350);
+      statusInputs();
     }
     vTaskDelay( 2 );
   }
+}
+
+void statusCommunication() {
+  String str;
+  str.reserve( 120 );
+
+  str = "PGN recv: ";
+  str += udpHandlerTimeGenerator(udpAogData.lastReceived7FFE);
+  str += "<br/>";
+  str += "PGN send: ";
+  str += udpHandlerTimeGenerator(udpActualData.lastSent);
+  str += "<br />GPS sent: ";
+  if (gpsNmeaOutput.lastSent == 0) {
+    str += "never<br />";
+  } else {
+    str += millis() - gpsNmeaOutput.lastSent;
+    str += "ms";
+  }
+  str += "<br />RTCM: ";
+  switch ( gpsRtcmData.rtcmStatus ) {
+    case GpsRtcmData::RtcmStatus::setup:
+      str += "Setup";
+      break;
+    case GpsRtcmData::RtcmStatus::working:
+      str += "Working";
+      break;
+    case GpsRtcmData::RtcmStatus::error:
+      str += "Error";
+      break;
+    default:
+      str += "?";
+      break;
+  }
+  Control* labelPgnStatus = ESPUI.getControl( webLabelCommStatus );
+  labelPgnStatus->value = str + " ";
+  ESPUI.updateControl( webLabelCommStatus );
+}
+
+void statusInputs() {
+  String str;
+  str.reserve( 120 );
+  str = "Roll: ";
+  if (imuReadData) {
+    str += String(imuSettings.roll,1);
+  } else {
+    str += "NA";
+  }
+  str += "<br/>GPS Quality: ";
+  switch ( gpsNmeaOutput.qpsquality ) {
+    case GpsNmeaOutput::GpsQuality::none:
+      str += "No GPS Fix";
+      break;
+    case GpsNmeaOutput::GpsQuality::gps:
+      str += "GPS Fix";
+      break;
+    case GpsNmeaOutput::GpsQuality::dgps:
+      str += "DGPS Fix";
+      break;
+    case GpsNmeaOutput::GpsQuality::fixedrtk:
+      str += "RTK Fix";
+      break;
+    case GpsNmeaOutput::GpsQuality::floatrtk:
+      str += "RTK Float";
+      break;
+    default:
+      str += "?";
+      break;
+  }
+  str += "<br/>WAS Raw: ";
+  str += String(inputsWasSetup.statusRaw, 3);
+  str += "<br />WAS final: ";
+  str += String(udpActualData.steerAngleActual, 1);
+
+
+  Control* label = ESPUI.getControl( webLabelInputStatus );
+  label->value = str + " ";
+  ESPUI.updateControl( webLabelInputStatus );
+
 }
 
 void statusLedWorker( void* z ) {

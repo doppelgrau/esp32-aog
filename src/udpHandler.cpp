@@ -27,7 +27,7 @@ void udpHandlerInit(){
 }
 
 void udpHandlerCreateReceiveHandler() {
-  udpHandlerListener.onPacket([](AsyncUDPPacket &packet) {
+  udpHandlerListener.onPacket([](AsyncUDPPacket& packet) {
       uint8_t* data = packet.data();
       uint16_t pgn = data[1] + ( data[0] << 8 );
       switch ( pgn ) {
@@ -83,22 +83,6 @@ void udpHandlerSendData( void* z ) {
     // wait
     vTaskDelay( xFrequency );
   }
-}
-
-
-void udpHandlerWebUpdate() {
-  String str;
-  str.reserve( 40 );
-
-  str = "7FFE: ";
-  str += udpHandlerTimeGenerator(udpAogData.lastReceived7FFE);
-  str += "<br/>";
-  str += "7FFD: ";
-  str += udpHandlerTimeGenerator(udpActualData.lastSent);
-
-  Control* labelPgnStatus = ESPUI.getControl( webLabelPgnStatus );
-  labelPgnStatus->value = str;
-  ESPUI.updateControl( webLabelPgnStatus );
 }
 
 String udpHandlerTimeGenerator(uint last) {

@@ -7,8 +7,6 @@ extern AsyncUDP gpsCommonUdpSocket;
 constexpr uint gpsCommonPortDataToAog = 9999;
 constexpr uint gpsCommonPortOwn = 5588;
 
-extern int gpsCommonWebStatus;
-
 struct GpsRtcmData {
   enum class RtcmSource : uint8_t {
     none = 0,
@@ -49,6 +47,5 @@ struct GpsNmeaOutput {
 extern GpsNmeaOutput gpsNmeaOutput;
 
 void gpsSendNmeaString(String data);
-void gpsCommonStatus();
 void gpsCommonInit();
 #endif

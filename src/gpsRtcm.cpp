@@ -93,9 +93,9 @@ void gpsRtcmCreateUdpReceiveHandler() {
         if ( gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::gps1 || gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::both ) {
           gps1.write(data);
         }
-        if ( gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::gps2 || gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::both ) {
-          gps2.write(data);
-        }
+        // if ( gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::gps2 || gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::both ) {
+        //   gps2.write(data);
+        // }
       }
     }
   );
@@ -166,9 +166,9 @@ void gpsRtcmNtripReceiver( void* z ) {
             if ( gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::gps1 || gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::both ) {
               gps1.write( buff, c );
             }
-            if ( gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::gps2 || gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::both ) {
-              gps2.write( buff, c );
-            }
+            // if ( gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::gps2 || gpsRtcmData.rtcmDestination == GpsRtcmData::RtcmDestination::both ) {
+            //   gps2.write( buff, c );
+            // }
           }
           // send own position to ntrip server
           if ( millis() > timeoutSendGGA ) {

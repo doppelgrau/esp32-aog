@@ -32,4 +32,3 @@ void udpHandlerInit();
 void udpHandlerCreateReceiveHandler();
 String udpHandlerTimeGenerator(uint last);
 void udpHandlerSendData( void* z ) ;
-void udpHandlerWebUpdate();

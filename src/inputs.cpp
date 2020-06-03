@@ -5,7 +5,6 @@
 #include "udpHandler.hpp"
 #include <ESPUI.h>
 
-int inputsWasWebStatus;
 InputsWasData inputsWasSetup;
 InputsSwitchesConfig inputsSwitchesSetup;
 
@@ -221,7 +220,6 @@ void inputsSwitchesTask(void *z) {
 
 // calculates wheel angle
 void inputsWheelAngleInit() {
-  inputsWasWebStatus = ESPUI.addControl( ControlType::Label, "Status:", "", ControlColor::Turquoise, webTabSteeringAngle );
   inputsWasSetup.inputPort = preferences.getUChar("inputsWasIo", 255);
   uint16_t sel = ESPUI.addControl( ControlType::Select, "Wheel angle sensor input", (String)inputsWasSetup.inputPort, ControlColor::Wetasphalt, webTabSteeringAngle,
     []( Control * control, int id ) {
@@ -347,21 +345,4 @@ void inputsWheelAngleTask(void *z) {
     vTaskDelayUntil( &xLastWakeTime, xFrequency );
 
   } // end while loop
-}
-
-void inputsWheelAngleStatusUpdate() {
-  String str;
-  str.reserve( 70 );
-
-  str = "Raw: ";
-  str += String(inputsWasSetup.statusRaw, 3);
-  str += "<br />Raw degrees: ";
-  str += String(inputsWasSetup.statusDegrees, 1);
-  str += "<br />Final: ";
-  str += String(udpActualData.steerAngleActual, 1);
-  if (inputsWasWebStatus != 0 ){
-    Control* labelGpsStatus = ESPUI.getControl( inputsWasWebStatus );
-    labelGpsStatus->value = str;
-    ESPUI.updateControl( inputsWasWebStatus );
-  }
 }

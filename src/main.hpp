@@ -28,7 +28,7 @@
 #include <Wire.h>
 #include <HTTPClient.h>
 #include <AsyncUDP.h>
-#include <SoftwareSerial.h>
+// #include <SoftwareSerial.h>
 #include <SPI.h>
 #include <Preferences.h>
 
@@ -55,7 +55,7 @@ extern Preferences preferences;
 
 extern HardwareSerial usb;
 extern HardwareSerial gps1;
-extern SoftwareSerial gps2;
+// extern SoftwareSerial gps2;
 extern HardwareSerial rs232;
 
 
@@ -79,5 +79,8 @@ void statusWebWorker( void* z );
 ///////////////////////////////////////////////////////////////////////////
 // Helper Functions
 ///////////////////////////////////////////////////////////////////////////
+void statusCommunication() ;
+
+void statusInputs();
 
 #endif

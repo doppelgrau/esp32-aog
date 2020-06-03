@@ -31,14 +31,10 @@ struct InputsSwitchesConfig {
 };
 extern InputsSwitchesConfig inputsSwitchesSetup;
 
-
-extern int inputsWasWebStatus;
-
 void inputsSwitchesInit();
 void inputsSwitchesTask(void *z);
 
 void inputsWheelAngleInit();
 void inputsWheelAngleTask(void *z);
-void inputsWheelAngleStatusUpdate();
 
 #endif
