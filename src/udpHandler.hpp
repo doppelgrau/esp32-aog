@@ -8,6 +8,7 @@ struct UdpFromAogData {
   int16_t distanceFromGuidanceLine = 32020;
   float requiredSteerAngle;
   byte uTurnRelais;
+  float speed;
 };
 extern UdpFromAogData udpAogData;
 

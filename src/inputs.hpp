@@ -11,6 +11,8 @@ struct InputsWasData {
   float degreMultiplier;
   float statusRaw;
   float statusDegrees;
+  float maxDynamicSteerZero;
+  float sideHillCompensation;
   int wheelbase;
   int trackWidth;
   uint8_t correction;

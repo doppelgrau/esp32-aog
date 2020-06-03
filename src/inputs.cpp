@@ -287,6 +287,23 @@ void inputsWheelAngleInit() {
       control->color = ControlColor::Carrot;
       ESPUI.updateControl( control );
     } );
+  inputsWasSetup.sideHillCompensation = preferences.getFloat("inputsWasSideH", -0.05);
+  ESPUI.addControl( ControlType::Number, "Sidehill compentation (Degree steering for degre roll)", (String)inputsWasSetup.sideHillCompensation, ControlColor::Wetasphalt, webTabSteeringAngle,
+    []( Control * control, int id ) {
+      inputsWasSetup.sideHillCompensation = control->value.toFloat();
+      preferences.putFloat("inputsWasSideH", inputsWasSetup.sideHillCompensation);
+      control->color = ControlColor::Carrot;
+      ESPUI.updateControl( control );
+    } );
+  inputsWasSetup.maxDynamicSteerZero = preferences.getFloat("inputsWasDynZ", 2.5);
+  ESPUI.addControl( ControlType::Number, "Max. for dynamic steer zero adjust (max adjustment)", (String)inputsWasSetup.maxDynamicSteerZero, ControlColor::Wetasphalt, webTabSteeringAngle,
+    []( Control * control, int id ) {
+      inputsWasSetup.maxDynamicSteerZero = control->value.toFloat();
+      preferences.putFloat("inputsWasDynZ", inputsWasSetup.maxDynamicSteerZero);
+      control->color = ControlColor::Carrot;
+      ESPUI.updateControl( control );
+    } );
+
 
 // start task
 xTaskCreate( inputsWheelAngleTask, "WAS", 4096, NULL, 8, NULL );
@@ -296,6 +313,7 @@ xTaskCreate( inputsWheelAngleTask, "WAS", 4096, NULL, 8, NULL );
 void inputsWheelAngleTask(void *z) {
   constexpr TickType_t xFrequency = 20;
   TickType_t xLastWakeTime = xTaskGetTickCount();
+  float dynamicSteerZeroAdjust = 0;
   while (1) {
     float newInput = fabs(ioAccessGetAnalogInput(inputsWasSetup.inputPort)); // use fabs is the signal goes to negative numbers, eg. uses 5V for preferences
     inputsWasSetup.statusRaw = newInput;
@@ -335,6 +353,31 @@ void inputsWheelAngleTask(void *z) {
         newInput = mathAngle * 180 / PI;
       }
     } // end of Ackermann
+
+    // Sidehill compensation
+    if (fabs(inputsWasSetup.sideHillCompensation) > 0.001 && fabs(udpActualData.roll) < 50 ) {
+      newInput += inputsWasSetup.sideHillCompensation * udpActualData.roll;
+    }
+
+    // dynamic steer zero
+    if (inputsWasSetup.maxDynamicSteerZero > 0.01) {
+      // adjust only if steering is active and steering angleis low enough
+      if (udpActualData.steerSwitch                         // can steer
+        && udpAogData.lastReceived7FFE > (millis() - 150)   // timeout
+        && abs(udpAogData.distanceFromGuidanceLine) < 5,0   // not way off
+        && fabs(udpAogData.requiredSteerAngle) <= inputsWasSetup.maxDynamicSteerZero ) { // driving more or less straight ahead
+        int limitedDistance = min(300, abs(udpAogData.distanceFromGuidanceLine));
+        float correction = limitedDistance / 300.0 * inputsWasSetup.maxDynamicSteerZero * xFrequency / 1000 / 6.0; // ajust every time only a tiny bit, so that reaching maxDynamic Steer zero takes at least 6 seconds (all the time > 300mm deviation, starting at zero)
+        if (udpAogData.distanceFromGuidanceLine > 0) {
+          dynamicSteerZeroAdjust -= correction;
+        } else {
+          dynamicSteerZeroAdjust += correction;
+        }
+      }
+    } else {
+      dynamicSteerZeroAdjust = 0;
+    }
+    newInput += dynamicSteerZeroAdjust;
 
     // filter the values a bit
     newInput = wheelAngleSensorFilter.step( newInput );

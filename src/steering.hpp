@@ -17,7 +17,7 @@ struct SteeringCurrentSettings {
   float Ki = 0.5;
   float Kd = 1;
   float BangOn = 15;
-  float BangOff = 0.25;
+  float BangOff = 0.05;
   // for PWM
   uint8_t minPWM = 5;
   bool testMinPwm = false;
