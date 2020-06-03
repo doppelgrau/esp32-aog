@@ -370,8 +370,10 @@ void inputsWheelAngleTask(void *z) {
         float correction = limitedDistance / 300.0 * inputsWasSetup.maxDynamicSteerZero * xFrequency / 1000 / 6.0; // ajust every time only a tiny bit, so that reaching maxDynamic Steer zero takes at least 6 seconds (all the time > 300mm deviation, starting at zero)
         if (udpAogData.distanceFromGuidanceLine > 0) {
           dynamicSteerZeroAdjust -= correction;
+          dynamicSteerZeroAdjust = max(-inputsWasSetup.maxDynamicSteerZero, dynamicSteerZeroAdjust );
         } else {
           dynamicSteerZeroAdjust += correction;
+          dynamicSteerZeroAdjust = min(inputsWasSetup.maxDynamicSteerZero, dynamicSteerZeroAdjust );
         }
       }
     } else {
