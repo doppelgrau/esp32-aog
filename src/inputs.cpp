@@ -364,11 +364,12 @@ void inputsWheelAngleTask(void *z) {
       // adjust only if steering is active and steering angleis low enough
       if (udpActualData.steerSwitch                         // can steer
         && udpAogData.lastReceived7FFE > (millis() - 150)   // timeout
-        && abs(udpAogData.distanceFromGuidanceLine) < 5,0   // not way off
+        && abs(udpAogData.distanceFromGuidanceLine) < 500   // not way off
+        && udpAogData.speed > 2.3
         && fabs(udpAogData.requiredSteerAngle) <= inputsWasSetup.maxDynamicSteerZero ) { // driving more or less straight ahead
         int limitedDistance = min(300, abs(udpAogData.distanceFromGuidanceLine));
         float correction = limitedDistance / 300.0 * inputsWasSetup.maxDynamicSteerZero * xFrequency / 1000 / 6.0; // ajust every time only a tiny bit, so that reaching maxDynamic Steer zero takes at least 6 seconds (all the time > 300mm deviation, starting at zero)
-        if (udpAogData.distanceFromGuidanceLine > 0) {
+        if (udpAogData.distanceFromGuidanceLine < 0) {
           dynamicSteerZeroAdjust -= correction;
           dynamicSteerZeroAdjust = max(-inputsWasSetup.maxDynamicSteerZero, dynamicSteerZeroAdjust );
         } else {
